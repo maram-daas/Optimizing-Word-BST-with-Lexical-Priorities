@@ -1,6 +1,6 @@
   /**--------------------------------------------------------**/
   /**       C o n v e r s i o n   Z vers C (Standard)        **/
-  /**             Réalisée par Pr D.E ZEGOUR                 **/
+  /**             RÃ©alisÃ©e par Pr D.E ZEGOUR                 **/
   /**             E S I - Alger                              **/
   /**             Copywrite 2014                             **/
   /**--------------------------------------------------------**/
@@ -20,7 +20,7 @@
   #define True 1
   #define False 0
 
-  /** Implémentation **\: ARBRE BINAIRE DE STRUCTURES**/
+  /** ImplÃ©mentation **\: ARBRE BINAIRE DE STRUCTURES**/
 
   /** Structures statiques **/
 
@@ -102,7 +102,7 @@
     { free( P ) ; }
 
 
-  /** Implémentation **\: FICHIER
+  /** ImplÃ©mentation **\: FICHIER
   /* Traitement des fichiers ouverts */
 
   /* Traitement des fichiers ouverts */
@@ -289,7 +289,7 @@
     }
 
 
-  /** Implémentation **\: PILE DE ARBRES BINAIRES DE STRUCTURES**/
+  /** ImplÃ©mentation **\: PILE DE ARBRES BINAIRES DE STRUCTURES**/
   /** Piles **/
 
   typedef Pointeur_ATs Typeelem_PATs ;
@@ -333,7 +333,7 @@
     }
 
 
-  /** Implémentation **\: FILE DE ARBRES BINAIRES DE STRUCTURES**/
+  /** ImplÃ©mentation **\: FILE DE ARBRES BINAIRES DE STRUCTURES**/
   /** Files d'attente **/
 
   typedef Pointeur_ATs Typeelem_FATs ;
@@ -385,7 +385,7 @@
     }
 
 
-  /** Implémentation **\: FILE DE ENTIERS**/
+  /** ImplÃ©mentation **\: FILE DE ENTIERS**/
   /** Files d'attente **/
 
   typedef int Typeelem_Fi ;
