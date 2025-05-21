@@ -3,7 +3,7 @@ SOIT
     BST1 , BST3 , BST2 DES ARB DE (CHAINE);
     Fich UN FICHIER DE (CHAINE) BUFFER S ;
     X , Y , Z DES CARACTERES;
-    choix UN ENTIER ;
+    choix , NUM DES ENTIERS ;
     QUITTER UN BOOLEEN ;
 
 
@@ -18,7 +18,6 @@ SOIT
 
     insertBST UNE FONCTION (POINTEUR VERS UN ARB DE (CHAINE));
     libererARB UNE ACTION;
-    PREORDRE UNE ACTION;
 
     /*rotation*/
     rotGauche UNE FONCTION (POINTEUR VERS UN ARB DE (CHAINE));
@@ -30,10 +29,11 @@ SOIT
     rechMotBST UNE ACTION;
     rechMotBST1 UNE ACTION;
 
-    /*------test modules--------*/
+    /*------modules du test--------*/
     INORDRE UNE ACTION;
     HEIGHT UNE FONCTION (ENTIER);
     AFFICH_NIV UNE ACTION;
+    compteSpecial UNE ACTION ;
 
 /*------------------------programme principale----------------------*/
 DEBUT
@@ -43,28 +43,55 @@ DEBUT
 
      APPEL genererFichier(Fich , X,Y,Z);
      APPEL constructBST1(Fich, BST1 ,X ,Y,Z);
-     APPEL constructBST1(Fich, BST3 ,X ,Y,Z);
+     APPEL constructBST3(Fich, BST3 ,X ,Y,Z);
      /*ADD HERE THE CONSTRUCTION OF BST 2 */
 
      QUITTER := FAUX;
      TQ ( NON QUITTER )
         ECRIRE('');
-	ECRIRE('+---------------------------------------------+');
-	ECRIRE('|                    MENU                     |');
-	ECRIRE('+---------------------------------------------+');
-	ECRIRE('| 1. Parcours Inordre des arbres              |');
-	ECRIRE('| 2. Compter les mots commençant par X / Y / Z|');
-	ECRIRE('| 3. Compter les mots par niveau              |');
-	ECRIRE('| 4. Hauteur des arbres                       |');
-	ECRIRE('| 5. Rechercher un mot                        |');
-	ECRIRE('| 6. Recherche par intervalle                 |');
-	ECRIRE('| 7. Quitter                                  |');
+	ECRIRE('-------------------------------------------------------');
+	ECRIRE('                          MENU                         ');
+	ECRIRE('-------------------------------------------------------');
+	ECRIRE(' 1. Parcours Inordre des arbres              ');
+	ECRIRE(' 2. Compter les mots commençant par X / Y / Z ');
+	ECRIRE(' 3. Compter les mots par niveau              ');
+	ECRIRE(' 4. Hauteur des arbres                       ');
+	ECRIRE(' 5. Quitter                                  ');
 	ECRIRE('+---------------------------------------------+');
 
         ECRIRE('>> Choisissez une option : ');
         LIRE(choix);
         ECRIRE('');
 
+        SI (choix = 1)
+           ECRIRE ('PARCOURS INORDRE DU BST 1 ');
+           APPEL INORDRE ( BST1 ) ;
+           ECRIRE ('PARCOURS INORDRE DU BST 2 ');
+           APPEL INORDRE ( BST2 ) ;
+           ECRIRE ('PARCOURS INORDRE DU BST 3');
+           APPEL INORDRE ( BST3 ) ;
+
+        SINON SI (choix = 2)
+              NUM := 0;
+              APPEL compteSpecial(BST1,X,Y,Z,NUM);
+              ECRIRE('Nombre de Mots commencant par X , Y ou Z : ', NUM);
+
+              SINON SI (choix = 3)
+                     /* call compter mots par niveau */
+                    SINON SI (choix = 4)
+                          ECRIRE('Hauteur du BST1 :', HEIGHT(BST1));
+                          ECRIRE('Hauteur du BST2 :', HEIGHT(BST2));
+                          ECRIRE('Hauteur du BST3 :', HEIGHT(BST3));
+                          SINON SI (choix = 5)
+                                   ECRIRE('Fin du programme.');
+                                   QUITTER := VRAI;
+                                SINON
+                                    ECRIRE('Option invalide. Veuillez choisir une option entre 1 et 5.');
+                                FSI;
+                          FSI;
+                    FSI;
+              FSI;
+        FSI
 
      FTQ;
        APPEL libererARB(BST1);
@@ -322,15 +349,17 @@ DEBUT
     FSI;
 FIN
 /*----------------------------------------*/
-ACTION AFFICH_NIV(R,A,B,C)
+ACTION AFFICH_NIV(R,A,B,C,compte)
 SOIT
     R , P DES ARB DE (CHAINE);
     A , B, C DES CARACTERES;
     F1 UNE FILE DE ARB DE (CHAINE);
     F2 UNE FILE DE ENTIER ;
-    NIV UN ENTIER;
+    NIV ,NIV_PRED, compte DES ENTIERS;
     STR UNE CHAINE;
+    NEW_LVL UN BOOLEEN;
 DEBUT
+     compte := 0;
      SI ( R <> NIL )
         CREERFILE(F1);
         CREERFILE(F2); {pour garder le niveau de chaque noeud enfile}
@@ -339,29 +368,55 @@ DEBUT
         ENFILER(F1,R);
         NIV := 0 ;
         ENFILER(F2,NIV);
+        NIV_PRED := -1 ;
+        NEW_LVL := FAUX;
 
         TQ ( NON FILEVIDE (F1) ) ET ( NON FILEVIDE (F2) )
-           DEFILER(F1,P);
-           DEFILER (F2, NIV);
-
+           TQ ( NON NEW_LVL )
             /*PROCESS*/
+            DEFILER(F1,P);
+            DEFILER (F2, NIV);
             STR := STRUCT(INFO(P),1);
-           SI ( CARACT(STR,1) = A) OU ( CARACT(STR,1) = B) OU ( CARACT(STR,1) = C)
-              ECRIRE(STR,'NIVEAU:',NIV);
-           FSI;
 
-           SI(FG(P) <> NIL)
+            SI ( CARACT(STR,1) = A) OU ( CARACT(STR,1) = B) OU ( CARACT(STR,1) = C)
+                 compte := compte +1;
+                 ECRIRE(STR,'NIVEAU:',NIV);
+            FSI;
+
+
+            SI(FG(P) <> NIL)
               ENFILER(F1,FG(P));
               ENFILER(F2, NIV+1 );
-           FSI;
+            FSI;
 
-           SI(FD(P) <> NIL)
+            SI(FD(P) <> NIL)
               ENFILER(F1,FD(P));
               ENFILER(F2, NIV+1 );
-           FSI;
+            FSI;
+
+            SI ( NIV_PRED <> NIV )
+               NEW_LVL := VRAI
+            FSI;
         FTQ;
 
      FSI;
+FIN
+/*------------------------------------------------------------------------------------*/
+ACTION compteSpecial(R,X,Y,Z,count)
+SOIT
+    R UN ARB DE (CHAINE);
+    count UN ENTIER;
+    temp UNE CHAINE;
+    X,Y,Z DES CARACTERES;
+DEBUT
+   SI(R<>NIL)
+     temp := struct(INFO(R),1);
+     SI (caract(temp,1) = X) OU (caract(temp,1) = Y) OU (caract(temp,1) = Z)
+        count := count + 1;
+     FSI;
+     APPEL compteSpecial(FG(R),X,Y,Z,count);
+     APPEL compteSpecial(FD(R),X,Y,Z,count);
+   FSI;
 FIN
 
 /*---------------------------SEARCH---------------------*/
@@ -475,6 +530,8 @@ FIN
 
       FSI;
  FIN
+/*----------------------Range search---------------------------*/
+
 
 /*-----generer le fichier ------*/
 ACTION  genererFichier(F , A,B,C)
@@ -532,14 +589,3 @@ DEBUT
     FSI;
 FIN
 
-
-ACTION PREORDRE(R)
-SOIT
-    R UN ARB DE (CHAINE);
-DEBUT
-   SI(R<>NIL)
-     ECRIRE(INFO(R));
-     APPEL PREORDRE(FG(R));
-     APPEL PREORDRE(FD(R));
-   FSI;
-FIN
