@@ -31,6 +31,7 @@ SOIT
 
     /*------modules du test--------*/
     INORDRE UNE ACTION;
+    PREORDRE UNE ACTION;
     HEIGHT UNE FONCTION (ENTIER);
     AFFICH_NIV UNE ACTION;
     compteSpecial UNE ACTION ;
@@ -64,12 +65,8 @@ DEBUT
         ECRIRE('');
 
         SI (choix = 1)
-           ECRIRE ('PARCOURS INORDRE DU BST 1 ');
+           ECRIRE ('PARCOURS INORDRE DU BST  ');
            APPEL INORDRE ( BST1 ) ;
-           ECRIRE ('PARCOURS INORDRE DU BST 2 ');
-           APPEL INORDRE ( BST2 ) ;
-           ECRIRE ('PARCOURS INORDRE DU BST 3');
-           APPEL INORDRE ( BST3 ) ;
 
         SINON SI (choix = 2)
               NUM := 0;
@@ -77,11 +74,19 @@ DEBUT
               ECRIRE('Nombre de Mots commencant par X , Y ou Z : ', NUM);
 
               SINON SI (choix = 3)
-                     /* call compter mots par niveau */
+                     ECRIRE('Nombre De Mots commencant par X , Y ou Z Dans Chaque Niveau:');
+                     ECRIRE('BST1:');
+                     APPEL AFFICH_NIV(BST1,X,Y,Z);
+                     ECRIRE('BST2:');
+                     APPEL AFFICH_NIV(BST2,X,Y,Z);
+                     ECRIRE('BST3:');
+                     APPEL AFFICH_NIV(BST3,X,Y,Z);
+
                     SINON SI (choix = 4)
                           ECRIRE('Hauteur du BST1 :', HEIGHT(BST1));
                           ECRIRE('Hauteur du BST2 :', HEIGHT(BST2));
                           ECRIRE('Hauteur du BST3 :', HEIGHT(BST3));
+                          APPEL PREORDRE(BST1);
                           SINON SI (choix = 5)
                                    ECRIRE('Fin du programme.');
                                    QUITTER := VRAI;
@@ -95,7 +100,7 @@ DEBUT
 
      FTQ;
        APPEL libererARB(BST1);
-       /*APPEL libererARB(BST2);*/
+       APPEL libererARB(BST2);
        APPEL libererARB(BST3);
 FIN
 /*---------------------------MODULES-----------------------------------*/
@@ -349,57 +354,67 @@ DEBUT
     FSI;
 FIN
 /*----------------------------------------*/
-ACTION AFFICH_NIV(R,A,B,C,compte)
+ACTION AFFICH_NIV(R,A,B,C)
+
 SOIT
-    R , P DES ARB DE (CHAINE);
-    A , B, C DES CARACTERES;
-    F1 UNE FILE DE ARB DE (CHAINE);
-    F2 UNE FILE DE ENTIER ;
-    NIV ,NIV_PRED, compte DES ENTIERS;
-    STR UNE CHAINE;
-    NEW_LVL UN BOOLEEN;
+     R, P DES ARB DE (CHAINE);
+     A, B, C DES CARACTERES;
+     F1 UNE FILE DE ARB DE (CHAINE);
+     F2 UNE FILE DE ENTIER;
+     NIV, N, I DES ENTIERS;
+     STR UNE CHAINE;
+     T UN VECTEUR (50) DE ENTIER ;
+
 DEBUT
-     compte := 0;
-     SI ( R <> NIL )
+
+    SI (R <> NIL)
+
         CREERFILE(F1);
-        CREERFILE(F2); {pour garder le niveau de chaque noeud enfile}
+        CREERFILE(F2);
+        N := HEIGHT(R) + 1; {la hauteur du l'arb = taille du tab}
 
-        {enfile la racine et son niveau}
-        ENFILER(F1,R);
-        NIV := 0 ;
-        ENFILER(F2,NIV);
-        NIV_PRED := -1 ;
-        NEW_LVL := FAUX;
+        { Initialiser le tableau T à 0 }
+        POUR I := 1, 50 :
+            AFF_ELEMENT(T[I], 0);
+        FINPOUR;
 
-        TQ ( NON FILEVIDE (F1) ) ET ( NON FILEVIDE (F2) )
-           TQ ( NON NEW_LVL )
-            /*PROCESS*/
-            DEFILER(F1,P);
-            DEFILER (F2, NIV);
-            STR := STRUCT(INFO(P),1);
+       { Enfiler la racine}
+        ENFILER(F1, R);
+        NIV := 0;
+        ENFILER(F2, NIV);
 
-            SI ( CARACT(STR,1) = A) OU ( CARACT(STR,1) = B) OU ( CARACT(STR,1) = C)
-                 compte := compte +1;
-                 ECRIRE(STR,'NIVEAU:',NIV);
+        TQ (NON FILEVIDE(F1)) ET (NON FILEVIDE(F2))
+            DEFILER(F1, P);
+            DEFILER(F2, NIV);
+
+            STR := STRUCT(INFO(P), 1);
+              /* traiter le nœud courant  */
+
+            SI (CARACT(STR, 1) = A) OU (CARACT(STR, 1) = B) OU (CARACT(STR, 1) = C)
+                AFF_ELEMENT ( T [NIV+1] , ELEMENT(T[NIV+1]) + 1);
+                ECRIRE('ELEMENT:',STR,'NIVEAU',NIV);
             FSI;
 
 
-            SI(FG(P) <> NIL)
-              ENFILER(F1,FG(P));
-              ENFILER(F2, NIV+1 );
+            SI (FG(P) <> NIL)
+                ENFILER(F1, FG(P));
+                ENFILER(F2, NIV + 1);
             FSI;
 
-            SI(FD(P) <> NIL)
-              ENFILER(F1,FD(P));
-              ENFILER(F2, NIV+1 );
+            SI (FD(P) <> NIL)
+                ENFILER(F1, FD(P));
+                ENFILER(F2, NIV + 1);
             FSI;
 
-            SI ( NIV_PRED <> NIV )
-               NEW_LVL := VRAI
-            FSI;
         FTQ;
 
-     FSI;
+        /*AFFICHAGE*/
+        POUR I := 1 , N
+            ECRIRE('NIVEAU', I, 'NOMBRE', ELEMENT(T[I]));
+        FINPOUR;
+
+
+    FSI;
 FIN
 /*------------------------------------------------------------------------------------*/
 ACTION compteSpecial(R,X,Y,Z,count)
@@ -544,7 +559,7 @@ ACTION  genererFichier(F , A,B,C)
  DEBUT
 
       OUVRIR(F,'F2.z','N');
-      POUR J:= 1, 101
+      POUR J:= 1, 5
           APPEL RANDWORD(WORD, I, A, B, C);
           init_struct(S, [WORD]);
           ECRIRESEQ ( F , S )
@@ -586,6 +601,18 @@ DEBUT
        APPEL libererARB(TempGauche);
        APPEL libererARB(TempDroit);
        LIBERERNOEUD(R);
+    FSI;
+FIN
+
+
+ACTION PREORDRE(R)
+SOIT
+    R UN ARB DE (CHAINE);
+DEBUT
+    SI (R <> NIL)
+       ECRIRE(INFO(R));
+       APPEL PREORDRE(FG(R));
+       APPEL PREORDRE(FD(R));
     FSI;
 FIN
 
