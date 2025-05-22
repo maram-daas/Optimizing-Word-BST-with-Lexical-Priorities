@@ -48,7 +48,7 @@ DEBUT
      APPEL genererFichier(Fich , X,Y,Z);
      APPEL constructBST1(Fich, BST1 ,X ,Y,Z);
      APPEL constructBST3(Fich, BST3 ,X ,Y,Z);
-     APPEL constructBST2(Fich, BST3 ,X ,Y,Z);
+     APPEL constructBST3(Fich, BST2 ,X ,Y,Z);
 
      QUITTER := FAUX;
      TQ ( NON QUITTER )
@@ -60,7 +60,8 @@ DEBUT
 	ECRIRE(' 2. Compter les mots commençant par X / Y / Z ');
 	ECRIRE(' 3. Compter les mots par niveau              ');
 	ECRIRE(' 4. Hauteur des arbres                       ');
-	ECRIRE(' 5. Quitter                                  ');
+        ECRIRE(' 5. Le RANGEQUERY                       ');
+	ECRIRE(' 6. Quitter                                  ');
 	ECRIRE('+---------------------------------------------+');
 
         ECRIRE('>> Choisissez une option : ');
@@ -90,11 +91,16 @@ DEBUT
                           ECRIRE('Hauteur du BST2 :', HEIGHT(BST2));
                           ECRIRE('Hauteur du BST3 :', HEIGHT(BST3));
                           APPEL PREORDRE(BST1);
-                          SINON SI (choix = 5)
+                          SINON SI (choix = 6)
                                    ECRIRE('Fin du programme.');
                                    QUITTER := VRAI;
+                                SINON SI (choix = 5)
+                                     ECRIRE('RANGE QUERY');
+                                     APPEL RANGEQUERY(BST2, X, Y, Z);
                                 SINON
                                     ECRIRE('Option invalide. Veuillez choisir une option entre 1 et 5.');
+                                    FSI;
+
                                 FSI;
                           FSI;
                     FSI;
@@ -223,7 +229,7 @@ DEBUT
     ECRIRE('NUMBER OF WORDS FOUND :');
     ECRIRE(CPT);
 FIN
-                      
+
 {construction du BST1 a partir du fichier genere}
 
  ACTION constructBST1(F, TREE , A , B, C)
@@ -733,4 +739,3 @@ DEBUT
        APPEL PREORDRE(FD(R));
     FSI;
 FIN
-
