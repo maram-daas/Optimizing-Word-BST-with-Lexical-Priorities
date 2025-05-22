@@ -1,10 +1,12 @@
 /*---------------Definition des structures principales---------------------*/
 SOIT
     BST1 , BST3 , BST2 DES ARB DE (CHAINE);
+    P , PAR DES POINTEURS VERS ARB DE (CHAINE);
     Fich UN FICHIER DE (CHAINE) BUFFER S ;
     X , Y , Z DES CARACTERES;
     choix , NUM DES ENTIERS ;
     QUITTER UN BOOLEEN ;
+    STR UNE CHAINE;
 
 
 /*-------------------Declarations des modules----------------------*/
@@ -25,9 +27,10 @@ SOIT
     vers_racine UNE ACTION;
 
     /*------recherche d'un mot -----------*/
-    RECHERECHE UNE ACTION ;
+    RECHERCHE UNE ACTION ;
     rechMotBST UNE ACTION;
     rechMotBST1 UNE ACTION;
+    rechMotBST3 UNE ACTION;
 
     /*------modules du test--------*/
     INORDRE UNE ACTION;
@@ -57,7 +60,9 @@ DEBUT
 	ECRIRE(' 2. Compter les mots commençant par X / Y / Z ');
 	ECRIRE(' 3. Compter les mots par niveau              ');
 	ECRIRE(' 4. Hauteur des arbres                       ');
-	ECRIRE(' 5. Quitter                                  ');
+        ECRIRE(' 5. Recherche d''un mot                       ');
+        ECRIRE(' 6. Recherche des mots dans un intervale   ');
+	ECRIRE(' 7. Quitter                                  ');
 	ECRIRE('+---------------------------------------------+');
 
         ECRIRE('>> Choisissez une option : ');
@@ -86,17 +91,34 @@ DEBUT
                           ECRIRE('Hauteur du BST1 :', HEIGHT(BST1));
                           ECRIRE('Hauteur du BST2 :', HEIGHT(BST2));
                           ECRIRE('Hauteur du BST3 :', HEIGHT(BST3));
-                          APPEL PREORDRE(BST1);
                           SINON SI (choix = 5)
-                                   ECRIRE('Fin du programme.');
-                                   QUITTER := VRAI;
-                                SINON
-                                    ECRIRE('Option invalide. Veuillez choisir une option entre 1 et 5.');
+                                   ECRIRE('Test 1 : Entrez un mot a rechercher :');
+                                   LIRE(STR);
+                                   APPEL RECHERCHE( STR , PAR , P , NUM , X, Y ,Z);
+                                   ECRIRE('number of nodes visited to find the node :',NUM);
+                                   SI (P = NIL )
+                                      ECRIRE('Chaine non trouvee');
+                                   SINON
+                                      ECRIRE('Chaine trouvee :',INFO(P));
+                                      SI (PAR <> NIL )
+                                        ECRIRE('PARENT :',INFO(PAR));
+                                      FSI;
+                                   FSI;
+                                SINON SI (choix = 6)
+                                        /*RANGE SEARCH*/
+                                      SINON SI (choix = 7)
+                                               ECRIRE('Fin du programme.');
+                                               QUITTER := VRAI;
+
+                                            SINON
+                                                 ECRIRE('Option invalide. Veuillez choisir une option entre 1 et 5.');
+                                            FSI;
+                                       FSI;
                                 FSI;
-                          FSI;
-                    FSI;
-              FSI;
-        FSI
+                         FSI;
+                   FSI;
+           FSI;
+       FSI;
 
      FTQ;
        APPEL libererARB(BST1);
@@ -125,7 +147,7 @@ FIN
 
    TQ NON FINFICH (F )
       LIRESEQ ( F , S ) ;
-      P := insertBST(TREE,S );
+      P := insertBST(TREE,struct(S,1) );
       SI ( P <> NIL )
          {incrementer le compteur }
          NodesNum := NodesNum + 1 ;
@@ -145,7 +167,7 @@ FIN
  FIN
 
 
-
+ /*--------------------------------------------*/
   ACTION constructBST3(F, TREE , A , B, C)
  SOIT
     F UN FICHIER DE (CHAINES) BUFFER S ;
@@ -163,7 +185,7 @@ FIN
 
    TQ NON FINFICH (F )
       LIRESEQ ( F , S ) ;
-      P := insertBST(TREE,S );
+      P := insertBST(TREE,struct(S,1) );
       SI ( P <> NIL )
          {incrementer le compteur }
          NodesNum := NodesNum + 1 ;
@@ -190,7 +212,8 @@ FONCTION insertBST (TR, STR): POINTEUR VERS UN ARB DE(CHAINE)
 SOIT
     N, P ,PAR DES POINTEURS VERS ARB DE (CHAINE);
     TR UN ARB DE (CHAINE);
-    STR UNE (CHAINE);
+    STR UNE CHAINE;
+    CONT UNE (CHAINE);
     temp UN ENTIER;
 
 DEBUT
@@ -201,7 +224,8 @@ DEBUT
 
     SI (N = NIL)
        CREERNOEUD (N);
-       AFF_INFO(N,STR);
+       init_struct(CONT,[STR]);
+       AFF_INFO(N,CONT);
        AFF_PERE(N,PAR);
 
        SI (TR = NIL)
@@ -209,7 +233,7 @@ DEBUT
 
        SINON
 
-          SI (struct(STR,1) > struct(INFO(PAR),1))
+          SI (STR > struct(INFO(PAR),1))
              AFF_FD(PAR,N);
           SINON
              AFF_FG(PAR,N);
@@ -439,7 +463,7 @@ FIN
 /*----------WORD SEARCH---------*/
  {recherecher une chaine a l'aide du triplet ( bst1,2,3)}
 
- ACTION RECHERECHE( STR , PAR , P , PATH , X, Y ,Z)
+ ACTION RECHERCHE( STR , PAR , P , PATH , X, Y ,Z)
  SOIT
      STR , TEMP DES CHAINES;
      PAR , P DES POINTEURS VERS UN ARB DE (CHAINE) ;
@@ -447,13 +471,13 @@ FIN
      X , Y , Z DES CARACTERES;
  DEBUT
       PATH := 0 ;
-      SI ( caract(STR , 1) = X ) OU ( caract(STR , 1) = X ) OU ( caract(STR , 1) = X )
-         APPEL rechMotBST1(BST1 , STR , PAR , P ,X , Y , Z );
+      SI ( caract(STR , 1) = X ) OU ( caract(STR , 1) = Y ) OU ( caract(STR , 1) = Z )
+         APPEL rechMotBST1(BST1 , STR , PAR , P,PATH ,X , Y , Z );
 
       SINON SI (caract(STR, 1) > X) OU (caract(STR, 1) > Y) OU (caract(STR, 1) > Z)
-               APPEL rechMotBST(BST2 , STR , PAR , P );
+               APPEL rechMotBST(BST2 , STR , PAR , P ,PATH);
             SINON
-               APPEL rechMotBST(BST3 , STR , PAR , P );
+               APPEL rechMotBST3(BST3 , STR , PAR , P ,PATH ,X ,Y,Z);
             FSI;
       FSI;
  FIN
@@ -464,7 +488,7 @@ FIN
  SOIT
      TR UN ARB DE (CHAINE);
      PAR , P DES POINTEURS VERS ARB DE (CHAINE);
-     STR UNE (CHAINE);
+     STR UNE CHAINE;
      TROUVE UN BOOLEEN;
      PATH UN ENTIER ;
 
@@ -480,12 +504,12 @@ FIN
          PATH := 1;
          TROUVE := FAUX ;
          TANTQUE  (P <> NIL) ET  (NON TROUVE)
-               SI ( struct(INFO(P),1) = struct(STR,1) )
+               SI ( struct(INFO(P),1) = STR )
                   TROUVE := VRAI;
                SINON
                      PATH := PATH + 1 ;
                      PAR := P ;
-                     SI struct(STR,1) < struct(INFO ( P ),1)
+                     SI STR < struct(INFO ( P ),1)
                         P := FG ( PAR ) ;
 
                      SINON
@@ -503,7 +527,7 @@ FIN
      TR UN ARB DE (CHAINE);
      PAR , P DES POINTEURS VERS ARB DE (CHAINE);
      temp UNE CHAINE;
-     STR UNE (CHAINE);
+     STR UNE CHAINE;
      TROUVE UN BOOLEEN;
      X , Y , Z DES CARACTERES;
      PATH UN ENTIER ;
@@ -521,7 +545,7 @@ FIN
          TROUVE := FAUX ;
 
          TANTQUE  (P <> NIL) ET  (NON TROUVE)
-               SI ( struct(INFO(P),1) = struct(STR,1) )
+               SI ( struct(INFO(P),1) = STR )
                   TROUVE := VRAI;
 
                /*arret au premier mot non-special*/
@@ -532,7 +556,56 @@ FIN
                     SINON
                          PAR := P ;
                          PATH := PATH + 1 ;
-                         SI struct(STR,1) < struct(INFO ( P ),1)
+                         SI STR < struct(INFO ( P ),1)
+                         P := FG ( PAR ) ;
+
+                         SINON
+                         P := FD ( PAR ) ;
+
+                         FSI ;
+                    FSI;
+               FSI;
+         FTQ;
+
+      FSI;
+ FIN
+
+  /*---------------------------------------*/
+ ACTION rechMotBST3(TR , STR , PAR , P , PATH ,X , Y , Z )
+ SOIT
+     TR UN ARB DE (CHAINE);
+     PAR , P DES POINTEURS VERS ARB DE (CHAINE);
+     temp UNE CHAINE;
+     STR UNE CHAINE;
+     TROUVE UN BOOLEEN;
+     X , Y , Z DES CARACTERES;
+     PATH UN ENTIER ;
+
+ DEBUT
+      PAR := NIL ;
+
+      SI ( TR = NIL )
+         P := NIL ;
+         PATH := 0 ;
+
+      SINON
+         P := TR;
+         PATH := 1;
+         TROUVE := FAUX ;
+
+         TANTQUE  (P <> NIL) ET  (NON TROUVE)
+               SI ( struct(INFO(P),1) = STR )
+                  TROUVE := VRAI;
+
+               /*arret au premier mot special*/
+               SINON
+                    temp := struct(INFO(P),1) ;
+                    SI (caract(temp,1) = X) OU (caract(temp,1) = Y) OU (caract(temp,1) = Z)
+                       P := NIL ;
+                    SINON
+                         PAR := P ;
+                         PATH := PATH + 1 ;
+                         SI STR < struct(INFO ( P ),1)
                          P := FG ( PAR ) ;
 
                          SINON
@@ -559,11 +632,26 @@ ACTION  genererFichier(F , A,B,C)
  DEBUT
 
       OUVRIR(F,'F2.z','N');
+      /*
       POUR J:= 1, 5
           APPEL RANDWORD(WORD, I, A, B, C);
           init_struct(S, [WORD]);
           ECRIRESEQ ( F , S )
-      FPOUR ;
+      FPOUR ; */
+
+      init_struct(S, ['S']);
+      ECRIRESEQ ( F , S );
+      init_struct(S, ['a']);
+      ECRIRESEQ ( F , S );
+      init_struct(S, ['Q']);
+      ECRIRESEQ ( F , S ) ;
+      init_struct(S, ['b']);
+      ECRIRESEQ ( F , S ) ;
+      init_struct(S, ['A']);
+      ECRIRESEQ ( F , S ) ;
+      init_struct(S, ['W']);
+      ECRIRESEQ ( F , S ) ;
+
       FERMER ( F);
 
  FIN
