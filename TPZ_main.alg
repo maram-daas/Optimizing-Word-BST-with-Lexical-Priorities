@@ -98,7 +98,7 @@ DEBUT
                                      ECRIRE('RANGE QUERY');
                                      APPEL RANGEQUERY(BST2, X, Y, Z);
                                 SINON
-                                    ECRIRE('Option invalide. Veuillez choisir une option entre 1 et 5.');
+                                    ECRIRE('Option invalide. Veuillez choisir une option entre 1 et 6.');
                                     FSI;
 
                                 FSI;
