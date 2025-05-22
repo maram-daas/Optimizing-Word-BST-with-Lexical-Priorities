@@ -91,17 +91,17 @@ DEBUT
                           ECRIRE('Hauteur du BST1 :', HEIGHT(BST1));
                           ECRIRE('Hauteur du BST2 :', HEIGHT(BST2));
                           ECRIRE('Hauteur du BST3 :', HEIGHT(BST3));
-                          APPEL PREORDRE(BST1);
                           SINON SI (choix = 5)
                                    ECRIRE('Test 1 : Entrez un mot a rechercher :');
                                    LIRE(STR);
                                    APPEL RECHERCHE( STR , PAR , P , NUM , X, Y ,Z);
+                                   ECRIRE('number of nodes visited to find the node :',NUM);
                                    SI (P = NIL )
                                       ECRIRE('Chaine non trouvee');
                                    SINON
                                       ECRIRE('Chaine trouvee :',INFO(P));
                                       SI (PAR <> NIL )
-                                        ECRIRE('PARENET :',INFO(PAR));
+                                        ECRIRE('PARENT :',INFO(PAR));
                                       FSI;
                                    FSI;
                                 SINON SI (choix = 6)
@@ -167,7 +167,7 @@ FIN
  FIN
 
 
-
+ /*--------------------------------------------*/
   ACTION constructBST3(F, TREE , A , B, C)
  SOIT
     F UN FICHIER DE (CHAINES) BUFFER S ;
@@ -471,13 +471,13 @@ FIN
      X , Y , Z DES CARACTERES;
  DEBUT
       PATH := 0 ;
-      SI ( caract(STR , 1) = X ) OU ( caract(STR , 1) = X ) OU ( caract(STR , 1) = X )
+      SI ( caract(STR , 1) = X ) OU ( caract(STR , 1) = Y ) OU ( caract(STR , 1) = Z )
          APPEL rechMotBST1(BST1 , STR , PAR , P,PATH ,X , Y , Z );
 
       SINON SI (caract(STR, 1) > X) OU (caract(STR, 1) > Y) OU (caract(STR, 1) > Z)
                APPEL rechMotBST(BST2 , STR , PAR , P ,PATH);
             SINON
-               APPEL rechMotBST3(BST3 , STR , PAR , P ,PATH );
+               APPEL rechMotBST3(BST3 , STR , PAR , P ,PATH ,X ,Y,Z);
             FSI;
       FSI;
  FIN
@@ -597,7 +597,7 @@ FIN
                SI ( struct(INFO(P),1) = STR )
                   TROUVE := VRAI;
 
-               /*arret au premier mot non-special*/
+               /*arret au premier mot special*/
                SINON
                     temp := struct(INFO(P),1) ;
                     SI (caract(temp,1) = X) OU (caract(temp,1) = Y) OU (caract(temp,1) = Z)
@@ -632,6 +632,7 @@ ACTION  genererFichier(F , A,B,C)
  DEBUT
 
       OUVRIR(F,'F2.z','N');
+
       POUR J:= 1, 5
           APPEL RANDWORD(WORD, I, A, B, C);
           init_struct(S, [WORD]);
