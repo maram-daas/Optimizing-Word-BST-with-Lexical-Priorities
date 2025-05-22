@@ -1,6 +1,6 @@
   /**--------------------------------------------------------**/
   /**       C o n v e r s i o n   Z vers C (Standard)        **/
-  /**             Réalisée par Pr D.E ZEGOUR                 **/
+  /**             RÃ©alisÃ©e par Pr D.E ZEGOUR                 **/
   /**             E S I - Alger                              **/
   /**             Copywrite 2014                             **/
   /**--------------------------------------------------------**/
@@ -20,7 +20,12 @@
   #define True 1
   #define False 0
 
-  /** Implémentation **\: ARBRE BINAIRE DE STRUCTURES**/
+  void clear_screen() {
+    system("cls");
+}
+
+
+  /** ImplÃ©mentation **\: ARBRE BINAIRE DE STRUCTURES**/
 
   /** Structures statiques **/
 
@@ -102,7 +107,7 @@
     { free( P ) ; }
 
 
-  /** Implémentation **\: FICHIER
+  /** ImplÃ©mentation **\: FICHIER
   /* Traitement des fichiers ouverts */
 
   /* Traitement des fichiers ouverts */
@@ -168,13 +173,13 @@
   typedef string255 Typechamp1_s;
   typedef _Tx Typechamp1_s_Buf ;
 
-  /** Type du bloc de donn?es du fichier **/
+  /** Type du bloc de données du fichier **/
   typedef struct
     {
       Typechamp1_s_Buf Champ1 ;
     }  Typestruct1_s_Buf;
 
-  /** Type de la structure du bloc de donn?es du fichier **/
+  /** Type de la structure du bloc de données du fichier **/
   typedef struct
     {
       Typechamp1_s Champ1 ;
@@ -189,7 +194,7 @@
     {
       _Ptr_Noeud P = _Ouvert(Fp);
       if ( P != NULL )
-      /* Le fichier est d?j? ouvert */
+      /* Le fichier est déjà ouvert */
         {
          P->Sauv_pos = ftell (P->Var_fich);
          fclose(P->Var_fich);
@@ -208,8 +213,8 @@
       _Ptr_Noeud P;
       strcpy(Fp, _Depiler_ouvert(s));
       fclose(s) ;
-      /* Ya-til un fichier ouvert avec le m?me nom ?  */
-      /* Si Oui, le R?ouvrir ? la position sauvegard?e */
+      /* Ya-til un fichier ouvert avec le même nom ?  */
+      /* Si Oui, le Réouvrir à la position sauvegardée */
       P =  _Ouvert (Fp);
       if ( P != NULL)
       {
@@ -271,7 +276,7 @@
     {
       long K = ftell(s);
       fseek(s, 0, 2); /* Fin du fichier */
-      long K2 = ftell(s);   /* position ? partir du debut */
+      long K2 = ftell(s);   /* position à partir du debut */
       if  (K==K2)
         { fseek(s, K, 0); return 1;}
       else
@@ -282,14 +287,14 @@
     {
       long K;
       fseek(s, 0, 2); /* Fin du fichier */
-      K = ftell(s);   /* position ? partir du debut */
+      K = ftell(s);   /* position à partir du debut */
       K = K / sizeof (Typestruct1_s_Buf);
       K ++;
       return(K);
     }
 
 
-  /** Implémentation **\: PILE DE ARBRES BINAIRES DE STRUCTURES**/
+  /** ImplÃ©mentation **\: PILE DE ARBRES BINAIRES DE STRUCTURES**/
   /** Piles **/
 
   typedef Pointeur_ATs Typeelem_PATs ;
@@ -333,7 +338,7 @@
     }
 
 
-  /** Implémentation **\: FILE DE ARBRES BINAIRES DE STRUCTURES**/
+  /** ImplÃ©mentation **\: FILE DE ARBRES BINAIRES DE STRUCTURES**/
   /** Files d'attente **/
 
   typedef Pointeur_ATs Typeelem_FATs ;
@@ -385,7 +390,7 @@
     }
 
 
-  /** Implémentation **\: FILE DE ENTIERS**/
+  /** ImplÃ©mentation **\: FILE DE ENTIERS**/
   /** Files d'attente **/
 
   typedef int Typeelem_Fi ;
@@ -436,16 +441,36 @@
       else printf ("%s \n", "File d'attente vide");
     }
 
+
+  /** ImplÃ©mentation **\: TABLEAU DE ENTIERS**/
+
+  /** Tableaux **/
+
+  typedef int Typeelem_V50i ;
+  typedef Typeelem_V50i * Typevect_V50i ;
+
+  Typeelem_V50i Element_V50i ( Typevect_V50i V , int I1  )
+    {
+      return  *(V +  (I1-1)  ) ;
+    }
+
+  void Aff_element_V50i ( Typevect_V50i V  , int I1 ,  Typeelem_V50i Val )
+    {
+      *(V +  (I1-1)  ) = Val ;
+    }
+
   /** Variables du programme principal **/
   Pointeur_ATs Bst1=NULL;
   Pointeur_ATs Bst3=NULL;
   Pointeur_ATs Bst2=NULL;
-  Pointeur_ATs Bst0=NULL;
   FILE *Fich;
   Typestruct1_s S ;
   string2 X;
   string2 Y;
   string2 Z;
+  int Choix;
+  int Num;
+  bool Quitter;
 
   /** Fonctions standards **/
 
@@ -506,13 +531,17 @@
   void Inordre (Pointeur_ATs *Tr);
   int  Height (Pointeur_ATs *Tr) ;
   void Affich_niv (Pointeur_ATs *R , string2 *A , string2 *B , string2 *C);
-  void Rechmot (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P);
+  void Comptespecial (Pointeur_ATs *R , string2 *X , string2 *Y , string2 *Z , int *Count);
+  void Rechereche (string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z);
+  void Rechmotbst (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path);
+  void Rechmotbst1 (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z);
   void Genererfichier (FILE *F , string2 *A , string2 *B , string2 *C);
   void Randword (string255 *Word , int *I , string255 *A , string255 *B , string255 *C);
   void Libererarb (Pointeur_ATs *R);
   void Preordre (Pointeur_ATs *R);
 
   /*---------------------------MODULES-----------------------------------*/
+  /*---------CONSTRUCTION-------------------*/
   void Constructbst2 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
     {
       /** Variables locales **/
@@ -548,40 +577,6 @@
      printf ( " %d", Nodesnum ) ;
 
     }
-
-    void Constructbst0 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
-    {
-      /** Variables locales **/
-      Typestruct1_s S ;
-      int Nodesnum;
-      Pointeur_ATs P=NULL;
-      Pointeur_ATs Par=NULL;
-      string255 Str;
-
-      /** Corps du module **/
-     S = malloc(sizeof(Typestruct1_s));
-     S->Champ1 = malloc(255 * sizeof(char));
-     Str = malloc(255 * sizeof(char));
-     Ouvrir_s (&F , "F2.z" , "A" ) ;
-     Nodesnum  =  0 ;
-     while( ! Finfich_s ( F )) {
-       Lireseq_s ( F , S ) ;
-       P  =  Insertbst ( & *Tree , & S ) ;
-      /*incrementer le compteur */
-       if( ( P != NULL )) {
-         Nodesnum  =  Nodesnum + 1 ;
-         strcpy (Str,   Struct1_Ts ( Info_ATs ( P )  )) ;
-
-         } ;
-
-       } ;
-
-     Fermer_s ( F ) ;
-     printf ( " %s", "Compte = " );
-     printf ( " %d", Nodesnum ) ;
-
-    }
-
   void Vers_milieu (Pointeur_ATs *R , Pointeur_ATs *P)
     {
       /** Variables locales **/
@@ -641,11 +636,10 @@
      Notempty  =  True ;
      Randword ( & Mini , & I , & *A , & *B , & *C ) ;
      Randword ( & Maxi , & I , & *A , & *B , & *C ) ;
-     printf ( "\n %s", "MIN WORD: " ) ;
+     printf ( " %s", "MIN WORD: " ) ;
      printf ( " %s", Mini ) ;
-     printf ( "\n %s", "MAX WORD: " ) ;
-     printf ( " %s \n", Maxi ) ;
-     printf(" the words : \n");
+     printf ( " %s", "MAX WORD: " ) ;
+     printf ( " %s", Maxi ) ;
      Cpt  =  0 ;
      while( Notempty)  {
        while( P != NULL)  {
@@ -671,11 +665,10 @@
          Notempty  =  False;
        }
  } ;
-     printf ( " %s", "\n NUMBER OF WORDS FOUND :" ) ;
-     printf ( " %d \n", Cpt ) ;
+     printf ( " %s", "NUMBER OF WORDS FOUND :" ) ;
+     printf ( " %d", Cpt ) ;
 
     }
-  /*---------CONSTRUCTION-------------------*/
   /*construction du BST1 a partir du fichier genere*/
   void Constructbst1 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
     {
@@ -758,9 +751,10 @@
       Pointeur_ATs N=NULL;
       Pointeur_ATs P=NULL;
       Pointeur_ATs Par=NULL;
+      int Temp;
 
       /** Corps du module **/
-     Rechmot ( & *Tr , & *Str , & Par , & N ) ;
+     Rechmotbst ( & *Tr , & *Str , & Par , & N , & Temp ) ;
     /*si la chaine n'existe pas deja*/
      if( ( N == NULL )) {
        Creernoeud_ATs (& N ) ;
@@ -971,26 +965,38 @@
       Pointeur_FATs F1=NULL;
       Pointeur_Fi F2=NULL;
       int Niv;
+      int N;
+      int I;
       string255 Str;
+      Typevect_V50i T;
 
       /** Corps du module **/
      Str = malloc(255 * sizeof(char));
+     T = malloc(50 * sizeof(int));
      if( ( *R != NULL )) {
        Creerfile_FATs (& F1 ) ;
        Creerfile_Fi (& F2 ) ;
-      /*pour garder le niveau de chaque noeud enfile*/
-      /*enfile la racine et son niveau*/
+       N  =  Height ( & *R ) + 1 ;
+      /*la hauteur du l'arb = taille du tab*/
+      /* Initialiser le tableau T Ã  0 */
+       for( I  =  1 ;I <=  50 ; ++I) {
+         Aff_element_V50i ( T , I   , 0 ) ;
+
+       } ;
+      /* Enfiler la racine*/
        Enfiler_FATs ( F1 , *R ) ;
        Niv  =  0 ;
        Enfiler_Fi ( F2 , Niv ) ;
        while( ( ! Filevide_FATs ( F1 ) ) && ( ! Filevide_Fi ( F2 ) )) {
          Defiler_FATs ( F1 , &P ) ;
          Defiler_Fi ( F2 , &Niv ) ;
-        /*PROCESS*/
          strcpy (Str,   Struct1_Ts ( Info_ATs ( P )  )) ;
+        /* traiter le nÅ“ud courant  */
          if( (strcmp( Caract ( Str , 1 ), *A) == 0  ) || (strcmp( Caract ( Str , 1 ), *B) == 0  ) || (strcmp( Caract ( Str , 1 ), *C) == 0  )) {
+           Aff_element_V50i ( T , Niv + 1   , Element_V50i ( T , Niv + 1   ) + 1 ) ;
+           printf ( " %s", "ELEMENT:" );
            printf ( " %s", Str );
-           printf ( " %s", "NIVEAU:" );
+           printf ( " %s", "NIVEAU" );
            printf ( " %d", Niv ) ;
 
          } ;
@@ -1006,14 +1012,73 @@
          } ;
 
  } ;
+      /*AFFICHAGE*/
+       for( I  =  1 ;I <=  N ; ++I){
+         printf ( " %s", "NIVEAU" );
+         printf ( " %d", I );
+         printf ( " %s", "NOMBRE" );
+         printf ( " %d", Element_V50i(T,I) ) ;
+
+       } ;
+
+     } ;
+
+    }
+  /*------------------------------------------------------------------------------------*/
+  void Comptespecial (Pointeur_ATs *R , string2 *X , string2 *Y , string2 *Z , int *Count)
+    {
+      /** Variables locales **/
+      string255 Temp;
+      Pointeur_ATs _Px1=NULL;
+      Pointeur_ATs _Px2=NULL;
+
+      /** Corps du module **/
+     Temp = malloc(255 * sizeof(char));
+     if( ( *R != NULL )) {
+       strcpy (Temp,   Struct1_Ts ( Info_ATs ( *R )  )) ;
+       if( (strcmp( Caract ( Temp , 1 ), *X) == 0  ) || (strcmp( Caract ( Temp , 1 ), *Y) == 0  ) || (strcmp( Caract ( Temp , 1 ), *Z) == 0  )) {
+         *Count  =  *Count + 1 ;
+
+       } ;
+       _Px1 =  Fg_ATs ( *R ) ;
+       Comptespecial ( &_Px1, & *X , & *Y , & *Z , & *Count ) ;
+       _Px2 =  Fd_ATs ( *R ) ;
+       Comptespecial ( &_Px2, & *X , & *Y , & *Z , & *Count ) ;
 
      } ;
 
     }
   /*---------------------------SEARCH---------------------*/
   /*----------WORD SEARCH---------*/
+  /*recherecher une chaine a l'aide du triplet ( bst1,2,3)*/
+  void Rechereche (string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z)
+    {
+      /** Variables locales **/
+      string255 Temp;
+
+      /** Corps du module **/
+     Temp = malloc(255 * sizeof(char));
+     *Path  =  0 ;
+     if( (strcmp( Caract ( *Str , 1 ), *X) == 0  ) || (strcmp( Caract ( *Str , 1 ), *X) == 0  ) || (strcmp( Caract ( *Str , 1 ), *X) == 0  )) {
+       Rechmotbst1 ( & Bst1 , & *Str , & *Par , & *P , & *Path, & *X , & *Y , & *Z ) ;
+       }
+     else
+       {
+       if( (strcmp( Caract ( *Str , 1 ), *X) > 0  ) || (strcmp( Caract ( *Str , 1 ), *Y) > 0  ) || (strcmp( Caract ( *Str , 1 ), *Z) > 0  )) {
+         Rechmotbst ( & Bst2 , & *Str , & *Path, & *Par , & *P ) ;
+         }
+       else
+         {
+         Rechmotbst ( & Bst3 , & *Str , & *Path, & *Par , & *P ) ;
+
+       } ;
+
+     } ;
+
+    }
+  /*----------------------------------------*/
   /*Rechercher une chaine STR dans un BST TR*/
-  void Rechmot (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P)
+  void Rechmotbst (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path)
     {
       /** Variables locales **/
       bool Trouve;
@@ -1022,10 +1087,12 @@
      *Par  =  NULL ;
      if( ( *Tr == NULL )) {
        *P  =  NULL ;
+       *Path  =  0 ;
        }
      else
        {
        *P  =  *Tr ;
+       *Path  =  1 ;
        Trouve  =  False ;
        while( ( *P != NULL ) && ( ! Trouve )) {
          if( (strcmp( Struct1_Ts ( Info_ATs ( *P )  ), Struct1_Ts ( *Str  )) == 0  )) {
@@ -1033,6 +1100,7 @@
            }
          else
            {
+           *Path  =  *Path + 1 ;
            *Par  =  *P ;
            if(strcmp( Struct1_Ts ( *Str  ), Struct1_Ts ( Info_ATs ( *P )  )) < 0 ) {
              *P  =  Fg_ATs ( *Par ) ;
@@ -1050,6 +1118,59 @@
      } ;
 
     }
+  /*---------------------------------------*/
+  void Rechmotbst1 (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z)
+    {
+      /** Variables locales **/
+      string255 Temp;
+      bool Trouve;
+
+      /** Corps du module **/
+     Temp = malloc(255 * sizeof(char));
+     *Par  =  NULL ;
+     if( ( *Tr == NULL )) {
+       *P  =  NULL ;
+       *Path  =  0 ;
+       }
+     else
+       {
+       *P  =  *Tr ;
+       *Path  =  1 ;
+       Trouve  =  False ;
+       while( ( *P != NULL ) && ( ! Trouve )) {
+         if( (strcmp( Struct1_Ts ( Info_ATs ( *P )  ), Struct1_Ts ( *Str  )) == 0  )) {
+           Trouve  =  True ;
+          /*arret au premier mot non-special*/
+           }
+         else
+           {
+           strcpy (Temp,   Struct1_Ts ( Info_ATs ( *P )  )) ;
+           if( (strcmp( Caract ( Temp , 1 ), *X) != 0  ) && (strcmp( Caract ( Temp , 1 ), *Y) != 0  ) && (strcmp( Caract ( Temp , 1 ), *Z) != 0  )) {
+             *P  =  NULL ;
+             }
+           else
+             {
+             *Par  =  *P ;
+             *Path  =  *Path + 1 ;
+             if(strcmp( Struct1_Ts ( *Str  ), Struct1_Ts ( Info_ATs ( *P )  )) < 0 ) {
+               *P  =  Fg_ATs ( *Par ) ;
+               }
+             else
+               {
+               *P  =  Fd_ATs ( *Par ) ;
+
+             } ;
+
+           } ;
+
+         } ;
+
+ } ;
+
+     } ;
+
+    }
+  /*----------------------Range search---------------------------*/
   /*-----generer le fichier ------*/
   void Genererfichier (FILE *F , string2 *A , string2 *B , string2 *C)
     {
@@ -1065,7 +1186,7 @@
      S->Champ1 = malloc(255 * sizeof(char));
      Word = malloc(255 * sizeof(char));
      Ouvrir_s (&F , "F2.z" , "N" ) ;
-     for( J  =  1 ;J <=  101 ; ++J){
+     for( J  =  1 ;J <=  5 ; ++J){
        Randword ( & Word , & I , & *A , & *B , & *C ) ;
        S_S.Champ1= malloc(255 * sizeof(char));
        strcpy(S_S.Champ1 , Word) ;
@@ -1157,27 +1278,106 @@
      X = malloc(2 * sizeof(char));
      Y = malloc(2 * sizeof(char));
      Z = malloc(2 * sizeof(char));
-     printf(" ENTER THE FISRT LETTER : ");
+     printf(" Entrer la premiere lettre : ");
      scanf ( " %s", X ) ;
-     printf("\n");
-     printf(" ENTER THE SECOND LETTER : ");
+     printf("\n Entrer la deuxieme lettre : ");
      scanf ( " %s", Y ) ;
-     printf("\n");
-     printf(" ENTER THE THIRD LETTER : ");
+     printf("\n Entrer la troisieme lettre : ");
      scanf ( " %s", Z ) ;
-     printf("\n");
      Genererfichier ( & Fich , & X , & Y , & Z ) ;
-     Constructbst2 ( & Fich , & Bst2 , & X , & Y , & Z ) ;
-     printf ( " %s", " \nINORDRE : \n" ) ;
-     Inordre ( & Bst2 ) ;
-     printf("\n");
-     printf( "\n RANGE QUERY");
-     Rangequery ( & Bst2 , & X , & Y , & Z ) ;
-     printf ( " %s", "\n HEIGHT : " ) ;
-     printf ( " %d \n", Height(&Bst2) ) ;
+     Constructbst1 ( & Fich , & Bst1 , & X , & Y , & Z ) ;
+     Constructbst3 ( & Fich , & Bst3 , & X , & Y , & Z ) ;
+     Constructbst3 ( & Fich , & Bst2 , & X , & Y , & Z ) ;
+     Quitter  =  False ;
+     while( ( ! Quitter )) {
+       clear_screen();
+       printf ( " %s", "\n" ) ;
+       printf ( " %s", "-------------------------------------------------------\n" ) ;
+       printf ( " %s", "                          MENU                         \n" ) ;
+       printf ( " %s", "-------------------------------------------------------\n" ) ;
+       printf ( " %s", " 1. Parcours Inordre des arbres              \n" ) ;
+       printf ( " %s", " 2. Compter les mots commencant par X / Y / Z \n" ) ;
+       printf ( " %s", " 3. Compter les mots par niveau              \n" ) ;
+       printf ( " %s", " 4. Hauteur des arbres                       \n" ) ;
+       printf ( " %s", " 5. Quitter                                  \n" ) ;
+       printf ( " %s", "-------------------------------------------------------\n" ) ;
+       printf ( " %s", ">> Choisissez une option : " ) ;
+       scanf ( " %d", &Choix ) ;
+       printf ( " %s", "\n" ) ;
+       if( ( Choix == 1 )) {
+         printf ( " %s", "PARCOURS INORDRE DU BST  \n" ) ;
+         Inordre ( & Bst1 ) ;
+         getchar();
+         printf("\n Appuyer sur entrer pour continuer..");
+         getchar();
+         }
+       else
+         {
+         if( ( Choix == 2 )) {
+           Num  =  0 ;
+           Comptespecial ( & Bst1 , & X , & Y , & Z , & Num ) ;
+           printf ( " %s", "Nombre de Mots commencant par X , Y ou Z : " );
+           printf ( " %d", Num ) ;
+           printf ( " %s", "\n" ) ;
+           getchar();
+            printf("\n Appuyer sur entrer pour continuer..");
+         getchar();
+           }
+         else
+           {
+           if( ( Choix == 3 )) {
+             printf ( " %s", "Nombre De Mots commencant par X , Y ou Z Dans Chaque Niveau:\n" ) ;
+             printf ( " %s", "BST1:\n" ) ;
+             Affich_niv ( & Bst1 , & X , & Y , & Z ) ;
+             printf ( " %s", "BST2:\n" ) ;
+             Affich_niv ( & Bst2 , & X , & Y , & Z ) ;
+             printf ( " %s", "BST3:\n" ) ;
+             Affich_niv ( & Bst3 , & X , & Y , & Z ) ;
+             getchar();
+                      printf("\n Appuyer sur entrer pour continuer..");
+         getchar();
+             }
+           else
+             {
+             if( ( Choix == 4 )) {
+               printf ( " %s", "Hauteur du BST1 :" );
+               printf ( " %d", Height(&Bst1) ) ;
+               printf ( " %s", "\n" ) ;
+               printf ( " %s", "Hauteur du BST2 :" );
+               printf ( " %d", Height(&Bst2) ) ;
+               printf ( " %s", "\n" ) ;
+               printf ( " %s", "Hauteur du BST3 :" );
+               printf ( " %d", Height(&Bst3) ) ;
+               printf ( " %s", "\n" ) ;
+               Preordre ( & Bst1 ) ;
+               getchar();
+                        printf("\n Appuyer sur entrer pour continuer..");
+         getchar();
+               }
+             else
+               {
+               if( ( Choix == 5 )) {
+                 printf ( " %s", "Fin du programme.\n" ) ;
+                 Quitter  =  True ;
+                 getchar();
+                          printf("\n Appuyer sur entrer pour continuer..");
+         getchar();
+                 }
+               else
+                 {
+                 printf ( " %s", "Option invalide. Veuillez choisir une option entre 1 et 5.\n" ) ;
+                 getchar();
+                          printf("\n Appuyer sur entrer pour continuer..");
+         getchar();
+               } ;
+             } ;
+           } ;
+         } ;
+       }
+ } ;
+     Libererarb ( & Bst1 ) ;
      Libererarb ( & Bst2 ) ;
-
-
+     Libererarb ( & Bst3 ) ;
       system("PAUSE");
       return 0;
     }
