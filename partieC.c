@@ -636,11 +636,12 @@
      Notempty  =  True ;
      Randword ( & Mini , & I , & *A , & *B , & *C ) ;
      Randword ( & Maxi , & I , & *A , & *B , & *C ) ;
-     printf ( " %s", "MIN WORD: " ) ;
+     printf ( " %s", "MIN mot: " ) ;
      printf ( " %s", Mini ) ;
-     printf ( " %s", "MAX WORD: " ) ;
-     printf ( " %s", Maxi ) ;
+     printf ( " %s", "\n MAX mot: " ) ;
+     printf ( " %s\n", Maxi ) ;
      Cpt  =  0 ;
+     printf("\n Les mots : \n");
      while( Notempty)  {
        while( P != NULL)  {
          Empiler_PATs (& Pil , P ) ;
@@ -665,9 +666,8 @@
          Notempty  =  False;
        }
  } ;
-     printf ( " %s", "NUMBER OF WORDS FOUND :" ) ;
+     printf ( " %s", "\n Nombre de mots trouves :" ) ;
      printf ( " %d", Cpt ) ;
-
     }
   /*construction du BST1 a partir du fichier genere*/
   void Constructbst1 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
@@ -1299,7 +1299,8 @@
        printf ( " %s", " 2. Compter les mots commencant par X / Y / Z \n" ) ;
        printf ( " %s", " 3. Compter les mots par niveau              \n" ) ;
        printf ( " %s", " 4. Hauteur des arbres                       \n" ) ;
-       printf ( " %s", " 5. Quitter                                  \n" ) ;
+       printf ( " %s", " 5. Le RANGEQUERY                       \n" ) ;
+       printf ( " %s", " 6. Quitter                                  \n" ) ;
        printf ( " %s", "-------------------------------------------------------\n" ) ;
        printf ( " %s", ">> Choisissez une option : " ) ;
        scanf ( " %d", &Choix ) ;
@@ -1356,20 +1357,30 @@
                }
              else
                {
-               if( ( Choix == 5 )) {
+               if( ( Choix == 6 )) {
                  printf ( " %s", "Fin du programme.\n" ) ;
                  Quitter  =  True ;
                  getchar();
                           printf("\n Appuyer sur entrer pour continuer..");
          getchar();
                  }
+                 else
+                 {
+                     if ((Choix == 5)){
+                        printf(" Le RANGEQUERY : \n");
+                        Rangequery(&Bst2, &X, &Y, &Z);
+                        getchar();
+                        printf("\n Appuyer sur entrer pour continuer..");
+                        getchar();
+                     }
                else
                  {
-                 printf ( " %s", "Option invalide. Veuillez choisir une option entre 1 et 5.\n" ) ;
+                 printf ( " %s", "Option invalide. Veuillez choisir une option entre 1 et 6.\n" ) ;
                  getchar();
                           printf("\n Appuyer sur entrer pour continuer..");
          getchar();
                } ;
+                 } ;
              } ;
            } ;
          } ;
