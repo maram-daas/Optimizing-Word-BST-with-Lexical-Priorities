@@ -17,6 +17,7 @@ SOIT
      /*-----construction------*/
     constructBST1  UNE ACTION;
     constructBST3 UNE ACTION;
+    constructBST2 UNE ACTION;
 
     insertBST UNE FONCTION (POINTEUR VERS UN ARB DE (CHAINE));
     libererARB UNE ACTION;
@@ -25,12 +26,15 @@ SOIT
     rotGauche UNE FONCTION (POINTEUR VERS UN ARB DE (CHAINE));
     rotDroite UNE FONCTION (POINTEUR VERS UN ARB DE (CHAINE));
     vers_racine UNE ACTION;
+    vers_milieu UNE ACTION;
 
     /*------recherche d'un mot -----------*/
     RECHERCHE UNE ACTION ;
     rechMotBST UNE ACTION;
     rechMotBST1 UNE ACTION;
     rechMotBST3 UNE ACTION;
+
+    RANGEQUERY UNE ACTION;
 
     /*------modules du test--------*/
     INORDRE UNE ACTION;
@@ -48,7 +52,7 @@ DEBUT
      APPEL genererFichier(Fich , X,Y,Z);
      APPEL constructBST1(Fich, BST1 ,X ,Y,Z);
      APPEL constructBST3(Fich, BST3 ,X ,Y,Z);
-     /*ADD HERE THE CONSTRUCTION OF BST 2 */
+     APPEL constructBST2(Fich, BST2 ,X ,Y,Z);
 
      QUITTER := FAUX;
      TQ ( NON QUITTER )
@@ -60,8 +64,8 @@ DEBUT
 	ECRIRE(' 2. Compter les mots commençant par X / Y / Z ');
 	ECRIRE(' 3. Compter les mots par niveau              ');
 	ECRIRE(' 4. Hauteur des arbres                       ');
-        ECRIRE(' 5. Recherche d''un mot                       ');
-        ECRIRE(' 6. Recherche des mots dans un intervale   ');
+  ECRIRE(' 5. Recherche d''un mot                       ');
+  ECRIRE(' 6. Le RANGEQUERY                       ');
 	ECRIRE(' 7. Quitter                                  ');
 	ECRIRE('+---------------------------------------------+');
 
@@ -91,6 +95,7 @@ DEBUT
                           ECRIRE('Hauteur du BST1 :', HEIGHT(BST1));
                           ECRIRE('Hauteur du BST2 :', HEIGHT(BST2));
                           ECRIRE('Hauteur du BST3 :', HEIGHT(BST3));
+
                           SINON SI (choix = 5)
                                    ECRIRE('Test 1 : Entrez un mot a rechercher :');
                                    LIRE(STR);
@@ -105,7 +110,8 @@ DEBUT
                                       FSI;
                                    FSI;
                                 SINON SI (choix = 6)
-                                        /*RANGE SEARCH*/
+                                          ECRIRE('RANGE QUERY');
+                                          APPEL RANGEQUERY(BST2, X, Y, Z);
                                       SINON SI (choix = 7)
                                                ECRIRE('Fin du programme.');
                                                QUITTER := VRAI;
@@ -128,6 +134,121 @@ FIN
 /*---------------------------MODULES-----------------------------------*/
 
 /*---------CONSTRUCTION-------------------*/
+
+ACTION constructBST2(F, TREE , A , B, C)
+ SOIT
+    F UN FICHIER DE (CHAINES) BUFFER S ;
+    TREE UN ARB DE (CHAINE);
+    NodesNum UN ENTIER ;
+    P , PAR UN POINTEUR VERS UN ARB DE (CHAINE) ;
+    STR UNE CHAINE;
+    A , B, C DES CARACTERES ;
+
+
+ DEBUT
+   OUVRIR ( F , 'F2.z' , 'A' ) ;
+   NodesNum := 0 ;
+
+
+   TQ NON FINFICH (F )
+      LIRESEQ ( F , S ) ;
+      P := insertBST(TREE,S );
+      SI ( P <> NIL )
+         {incrementer le compteur }
+         NodesNum := NodesNum + 1 ;
+
+         STR := struct(INFO(P),1);
+
+         SI (caract(STR,1) = A) OU (caract(STR,1) = B) OU (caract(STR,1) = C)
+            APPEL vers_milieu(TREE,P);
+         FSI;
+      FSI;
+
+   FTQ ;
+
+   FERMER ( F);
+   ECRIRE ( 'Compte = ' , NodesNum ) ;
+ FIN
+
+
+ ACTION vers_milieu(R, P)
+SOIT
+    R UN ARB DE (CHAINE);
+    P, PAR, N DES POINTEURS VERS UN ARB DE (CHAINE);
+    L, CPT UN ENTIER;
+DEBUT
+    CPT := 0;
+    SI (P <> NIL)
+       PAR := PERE(P);
+       L := HEIGHT(R);
+       L := L / 2;
+       TQ (PAR <> NIL) ET (CPT < L)
+          SI (FG(PAR) = P)
+            P := rotDroite(PAR);
+          SINON
+             P := rotGauche(PAR);
+          FSI;
+          PAR := PERE(P);
+          CPT := CPT + 1;
+       FTQ;
+    FSI;
+    SI PERE(P) = NIL
+    R := P ;
+    FSI
+FIN
+
+ACTION RANGEQUERY(TR, A, B, C)
+SOIT
+    TR ,P , Q DES ARB DE (CHAINE);
+    NOTEMPTY UN BOOLEEN ;
+    Pil UNE PILE DE ARB DE (CHAINE);
+    STR UNE CHAINE;
+    CPT UN ENTIER;
+    WORD UNE CHAINE;
+    I UN ENTIER ;
+    A, B, C DES CARACTERES ;
+    MAXI UNE CHAINE;
+    MINI UN CHAINE;
+DEBUT
+    CREERPILE ( Pil ) ;
+    P := TR ;
+    NOTEMPTY := VRAI ;
+
+    APPEL RANDWORD(MINI, I, A, B, C);
+    APPEL RANDWORD(MAXI, I, A, B, C);
+    ECRIRE('MIN WORD: ');
+    ECRIRE(MINI);
+    ECRIRE('MAX WORD: ');
+    ECRIRE(MAXI);
+    CPT := 0;
+
+    TQ NOTEMPTY :
+      TQ P <> NIL :
+         EMPILER ( Pil , P ) ;
+         P := FG ( P )
+         FTQ ;
+
+      SI NON PILEVIDE ( Pil ) :
+         DEPILER ( Pil , P ) ;
+         STR := STRUCT(INFO(P),1);
+         SI caract(STR,1) < caract(MAXI,1) :
+           SI caract(STR,1) > caract(MINI,1) :
+              ECRIRE(INFO(P));
+              CPT := CPT + 1;
+           FSI
+         FSI;
+
+         P := FD ( P ) ;
+
+      SINON
+         NOTEMPTY := FAUX
+      FSI
+
+    FTQ;
+    ECRIRE('NUMBER OF WORDS FOUND :');
+    ECRIRE(CPT);
+FIN
+
 {construction du BST1 a partir du fichier genere}
 
  ACTION constructBST1(F, TREE , A , B, C)
@@ -689,4 +810,3 @@ DEBUT
        APPEL PREORDRE(FD(R));
     FSI;
 FIN
-
