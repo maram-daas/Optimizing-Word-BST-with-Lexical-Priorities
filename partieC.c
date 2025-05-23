@@ -1,4 +1,4 @@
-  /**--------------------------------------------------------**/
+/**--------------------------------------------------------**/
   /**       C o n v e r s i o n   Z vers C (Standard)        **/
   /**             RÃ©alisÃ©e par Pr D.E ZEGOUR                 **/
   /**             E S I - Alger                              **/
@@ -19,11 +19,6 @@
 
   #define True 1
   #define False 0
-
-  void clear_screen() {
-    system("cls");
-}
-
 
   /** ImplÃ©mentation **\: ARBRE BINAIRE DE STRUCTURES**/
 
@@ -334,7 +329,7 @@
           *P = (*P)->Suiv;
           free(Sauv);
         }
-      else printf ("%s \n", "Pile vide");
+      else printf ("%s\n", "Pile vide");
     }
 
 
@@ -386,7 +381,7 @@
           *Val = Fil->Tete->Val ;
           Fil->Tete =  Fil->Tete->Suiv;
         }
-      else printf ("%s \n", "File d'attente vide");
+      else printf ("%s\n", "File d'attente vide");
     }
 
 
@@ -438,7 +433,7 @@
           *Val = Fil->Tete->Val ;
           Fil->Tete =  Fil->Tete->Suiv;
         }
-      else printf ("%s \n", "File d'attente vide");
+      else printf ("%s\n", "File d'attente vide");
     }
 
 
@@ -463,6 +458,8 @@
   Pointeur_ATs Bst1=NULL;
   Pointeur_ATs Bst3=NULL;
   Pointeur_ATs Bst2=NULL;
+  Pointeur_ATs P=NULL;
+  Pointeur_ATs Par=NULL;
   FILE *Fich;
   Typestruct1_s S ;
   string2 X;
@@ -471,6 +468,10 @@
   int Choix;
   int Num;
   bool Quitter;
+  string255 Str;
+  int N;
+  Type_Ts _Struct_Temp1;
+  Type_Ts _Struct_Temp2;
 
   /** Fonctions standards **/
 
@@ -513,7 +514,7 @@
   /** Initialisation d'une structure **/
   void Init_struct_Ts ( Typestr_Ts S, Type_Ts S_ )
     {
-      S->Champ1 = S_.Champ1 ;
+      strcpy( S->Champ1 , S_.Champ1 );
     }
 
 
@@ -521,10 +522,11 @@
 
   void Constructbst2 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C);
   void Vers_milieu (Pointeur_ATs *R , Pointeur_ATs *P);
-  void Rangequery (Pointeur_ATs *Tr , string2 *A , string2 *B , string2 *C);
+  void Rangequery_optimal (Pointeur_ATs *Bst1 , Pointeur_ATs *Bst2 , Pointeur_ATs *Bst3 , string2 *X , string2 *Y , string2 *Z , int *N);
+  void Rangequery (Pointeur_ATs *Tr , string255 *Mini , string255 *Maxi , int *N);
   void Constructbst1 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C);
   void Constructbst3 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C);
-  Pointeur_ATs Insertbst (Pointeur_ATs *Tr , Typestr_Ts *Str) ;
+  Pointeur_ATs Insertbst (Pointeur_ATs *Tr , string255 *Str) ;
   Pointeur_ATs Rotdroite (Pointeur_ATs *P) ;
   Pointeur_ATs Rotgauche (Pointeur_ATs *P) ;
   void Vers_racine (Pointeur_ATs *R , Pointeur_ATs *P);
@@ -532,9 +534,10 @@
   int  Height (Pointeur_ATs *Tr) ;
   void Affich_niv (Pointeur_ATs *R , string2 *A , string2 *B , string2 *C);
   void Comptespecial (Pointeur_ATs *R , string2 *X , string2 *Y , string2 *Z , int *Count);
-  void Rechereche (string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z);
-  void Rechmotbst (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path);
-  void Rechmotbst1 (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z);
+  void Recherche (string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z);
+  void Rechmotbst (Pointeur_ATs *Tr , string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path);
+  void Rechmotbst1 (Pointeur_ATs *Tr , string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z);
+  void Rechmotbst3 (Pointeur_ATs *Tr , string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z);
   void Genererfichier (FILE *F , string2 *A , string2 *B , string2 *C);
   void Randword (string255 *Word , int *I , string255 *A , string255 *B , string255 *C);
   void Libererarb (Pointeur_ATs *R);
@@ -550,16 +553,19 @@
       Pointeur_ATs P=NULL;
       Pointeur_ATs Par=NULL;
       string255 Str;
+      string255 _Px1;
 
       /** Corps du module **/
      S = malloc(sizeof(Typestruct1_s));
      S->Champ1 = malloc(255 * sizeof(char));
      Str = malloc(255 * sizeof(char));
+     _Px1 = malloc(255 * sizeof(char));
      Ouvrir_s (&F , "F2.z" , "A" ) ;
      Nodesnum  =  0 ;
      while( ! Finfich_s ( F )) {
        Lireseq_s ( F , S ) ;
-       P  =  Insertbst ( & *Tree , & S ) ;
+       strcpy(_Px1,  Struct1_Ts ( S  ) );
+       P  =  Insertbst ( & *Tree , &_Px1) ;
       /*incrementer le compteur */
        if( ( P != NULL )) {
          Nodesnum  =  Nodesnum + 1 ;
@@ -573,8 +579,8 @@
 
  } ;
      Fermer_s ( F ) ;
-     printf ( " %s", "Compte = " );
-     printf ( " %d", Nodesnum ) ;
+     printf ( "%s", "Compte = " );
+     printf ( "%d\n", Nodesnum ) ;
 
     }
   void Vers_milieu (Pointeur_ATs *R , Pointeur_ATs *P)
@@ -611,7 +617,53 @@
 
      }
     }
-  void Rangequery (Pointeur_ATs *Tr , string2 *A , string2 *B , string2 *C)
+  void Rangequery_optimal (Pointeur_ATs *Bst1 , Pointeur_ATs *Bst2 , Pointeur_ATs *Bst3 , string2 *X , string2 *Y , string2 *Z , int *N)
+    {
+      /** Variables locales **/
+      string255 Mini;
+      string255 Maxi;
+      int N1;
+      int N2;
+      int N3;
+      string2 Mini_char;
+      string2 Maxi_char;
+
+      /** Corps du module **/
+     Mini = malloc(255 * sizeof(char));
+     Maxi = malloc(255 * sizeof(char));
+     Mini_char = malloc(2 * sizeof(char));
+     Maxi_char = malloc(2 * sizeof(char));
+     printf ( "%s", " ENTRER LE MOT MINIMUM: " ) ;
+     scanf ( " %[^\n]", Mini ) ;
+     getchar();
+     printf ( "%s", " ENTRER LE MOT MAXIMUM: " ) ;
+     scanf ( " %[^\n]", Maxi ) ;
+     printf("\n");
+     getchar();
+     strcpy (Mini_char,   Caract ( Mini , 1 )) ;
+     strcpy (Maxi_char,   Caract ( Maxi , 1 )) ;
+     if( ( (strcmp( Mini_char, *X) == 0  ) || (strcmp( Mini_char, *Y) == 0  ) || (strcmp( Mini_char, *Z) == 0  ) ) && ( (strcmp( Maxi_char, *X) == 0  ) || (strcmp( Maxi_char, *Y) == 0  ) || (strcmp( Maxi_char, *Z) == 0  ) )) {
+       printf ( "%s\n", " USING BST1 - SPECIAL CHARS AT ROOT\n" ) ;
+       Rangequery ( & *Bst1 , & Mini , & Maxi , & *N ) ;
+       }
+     else
+       {
+       if( ( (strcmp( Mini_char, *X) != 0  ) && (strcmp( Mini_char, *Y) != 0  ) && (strcmp( Mini_char, *Z) != 0  ) ) && ( (strcmp( Maxi_char, *X) != 0  ) && (strcmp( Maxi_char, *Y) != 0  ) && (strcmp( Maxi_char, *Z) != 0  ) )) {
+         printf ( "%s\n", " USING BST3 - NON-SPECIAL CHARS AT ROOT\n" ) ;
+         Rangequery ( & *Bst3 , & Mini , & Maxi , & *N ) ;
+         }
+       else
+         {
+         printf ( "%s\n", " USING BST2 - BALANCED TREE\n" ) ;
+         Rangequery ( & *Bst2 , & Mini , & Maxi , & *N ) ;
+
+       }
+     } ;
+     printf ( "%s", "\n NUMBER OF NODES VISITED: " ) ;
+     printf ( "%d\n", *N ) ;
+
+    }
+  void Rangequery (Pointeur_ATs *Tr , string255 *Mini , string255 *Maxi , int *N)
     {
       /** Variables locales **/
       Pointeur_ATs P=NULL;
@@ -620,54 +672,59 @@
       Pointeur_PATs Pil=NULL;
       string255 Str;
       int Cpt;
-      string255 Word;
-      int I;
-      string255 Maxi;
-      string255 Mini;
-      Type_Ts _Struct_Temp1;
+      Type_Ts _Struct_Temp3;
 
       /** Corps du module **/
      Str = malloc(255 * sizeof(char));
-     Word = malloc(255 * sizeof(char));
-     Maxi = malloc(255 * sizeof(char));
-     Mini = malloc(255 * sizeof(char));
+     *N  =  0 ;
      Creerpile_PATs (& Pil ) ;
      P  =  *Tr ;
-     Notempty  =  True ;
-     Randword ( & Mini , & I , & *A , & *B , & *C ) ;
-     Randword ( & Maxi , & I , & *A , & *B , & *C ) ;
-     printf ( " %s", "MIN mot: " ) ;
-     printf ( " %s", Mini ) ;
-     printf ( " %s", "\n MAX mot: " ) ;
-     printf ( " %s\n", Maxi ) ;
      Cpt  =  0 ;
-     printf("\n Les mots : \n");
+     Notempty  =  True ;
      while( Notempty)  {
        while( P != NULL)  {
-         Empiler_PATs (& Pil , P ) ;
-         P  =  Fg_ATs ( P );
+         strcpy (Str,   Struct1_Ts ( Info_ATs ( P )  )) ;
+         if(strcmp( Str, *Mini) >= 0 )   {
+           Empiler_PATs (& Pil , P ) ;
+           P  =  Fg_ATs ( P ) ;
+           *N  =  *N + 1 ;
+           }
+         else
+           {
+           P  =  Fd_ATs ( P ) ;
+           *N  =  *N + 1 ;
+
+         } ;
+
  } ;
        if( ! Pilevide_PATs ( Pil ))   {
          Depiler_PATs (& Pil , &P ) ;
+         *N  =  *N + 1 ;
          strcpy (Str,   Struct1_Ts ( Info_ATs ( P )  )) ;
-         if(strcmp( Caract ( Str , 1 ), Caract ( Maxi , 1 )) < 0 )   {
-           if(strcmp( Caract ( Str , 1 ), Caract ( Mini , 1 )) > 0 )   {
-             /** Ecriture d'une structure */
-             _Struct_Temp1 = *Info_ATs(P);
-             printf ( " %s", _Struct_Temp1.Champ1 ) ;
-             Cpt  =  Cpt + 1 ;
+         if( (strcmp( Str, *Mini) >= 0  ) && (strcmp( Str, *Maxi) <= 0  ))   {
+           /** Ecriture d'une structure */
+           _Struct_Temp3 = *Info_ATs(P);
+           printf ( " %s\n", _Struct_Temp3.Champ1 ) ;
+           Cpt  =  Cpt + 1 ;
 
-           }
          } ;
-         P  =  Fd_ATs ( P ) ;
+         if(strcmp( Str, *Maxi) <= 0 )   {
+           P  =  Fd_ATs ( P ) ;
+           }
+         else
+           {
+           P  =  NULL ;
+
+         } ;
          }
        else
          {
          Notempty  =  False;
        }
  } ;
-     printf ( " %s", "\n Nombre de mots trouves :" ) ;
-     printf ( " %d", Cpt ) ;
+     printf ( "%s", "\n NUMBER OF WORDS FOUND :" ) ;
+     printf ( " %d\n", Cpt ) ;
+
     }
   /*construction du BST1 a partir du fichier genere*/
   void Constructbst1 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
@@ -678,16 +735,19 @@
       Pointeur_ATs P=NULL;
       Pointeur_ATs Par=NULL;
       string255 Str;
+      string255 _Px1;
 
       /** Corps du module **/
      S = malloc(sizeof(Typestruct1_s));
      S->Champ1 = malloc(255 * sizeof(char));
      Str = malloc(255 * sizeof(char));
+     _Px1 = malloc(255 * sizeof(char));
      Ouvrir_s (&F , "F2.z" , "A" ) ;
      Nodesnum  =  0 ;
      while( ! Finfich_s ( F )) {
        Lireseq_s ( F , S ) ;
-       P  =  Insertbst ( & *Tree , & S ) ;
+       strcpy(_Px1,  Struct1_Ts ( S  ) );
+       P  =  Insertbst ( & *Tree , &_Px1) ;
       /*incrementer le compteur */
        if( ( P != NULL )) {
          Nodesnum  =  Nodesnum + 1 ;
@@ -702,10 +762,11 @@
 
  } ;
      Fermer_s ( F ) ;
-     printf ( " %s", "Compte = " );
-     printf ( " %d", Nodesnum ) ;
+     printf ( " %s\n", "Compte = " );
+     printf ( " %d\n", Nodesnum ) ;
 
     }
+  /*--------------------------------------------*/
   void Constructbst3 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
     {
       /** Variables locales **/
@@ -714,16 +775,19 @@
       Pointeur_ATs P=NULL;
       Pointeur_ATs Par=NULL;
       string255 Str;
+      string255 _Px1;
 
       /** Corps du module **/
      S = malloc(sizeof(Typestruct1_s));
      S->Champ1 = malloc(255 * sizeof(char));
      Str = malloc(255 * sizeof(char));
+     _Px1 = malloc(255 * sizeof(char));
      Ouvrir_s (&F , "F2.z" , "A" ) ;
      Nodesnum  =  0 ;
      while( ! Finfich_s ( F )) {
        Lireseq_s ( F , S ) ;
-       P  =  Insertbst ( & *Tree , & S ) ;
+       strcpy(_Px1,  Struct1_Ts ( S  ) );
+       P  =  Insertbst ( & *Tree , &_Px1) ;
       /*incrementer le compteur */
        if( ( P != NULL )) {
          Nodesnum  =  Nodesnum + 1 ;
@@ -738,34 +802,41 @@
 
  } ;
      Fermer_s ( F ) ;
-     printf ( " %s", "Compte = " );
-     printf ( " %d", Nodesnum ) ;
+     printf ( " %s\n", "Compte = " );
+     printf ( " %d\n", Nodesnum ) ;
 
     }
   /*--------------------------------*/
   /*inserer un noeud dans le BST*/
-  Pointeur_ATs Insertbst (Pointeur_ATs *Tr , Typestr_Ts *Str)
+  Pointeur_ATs Insertbst (Pointeur_ATs *Tr , string255 *Str)
     {
       /** Variables locales **/
       Pointeur_ATs Insertbst2 =NULL;
       Pointeur_ATs N=NULL;
       Pointeur_ATs P=NULL;
       Pointeur_ATs Par=NULL;
+      Typestr_Ts Cont;
       int Temp;
+      Type_Ts S_Cont;
 
       /** Corps du module **/
+     Cont = malloc(sizeof(Type_Ts));
+     Cont->Champ1 = malloc(255 * sizeof(char));
      Rechmotbst ( & *Tr , & *Str , & Par , & N , & Temp ) ;
     /*si la chaine n'existe pas deja*/
      if( ( N == NULL )) {
        Creernoeud_ATs (& N ) ;
-       Aff_info_ATs ( N , *Str ) ;
+       S_Cont.Champ1= malloc(255 * sizeof(char));
+       strcpy(S_Cont.Champ1 , *Str) ;
+       Init_struct_Ts ( Cont , S_Cont )  ;
+       Aff_info_ATs ( N , Cont ) ;
        Aff_pere_ATs ( N , Par ) ;
        if( ( *Tr == NULL )) {
          *Tr  =  N ;
          }
        else
          {
-         if( (strcmp( Struct1_Ts ( *Str  ), Struct1_Ts ( Info_ATs ( Par )  )) > 0  )) {
+         if( (strcmp( *Str, Struct1_Ts ( Info_ATs ( Par )  )) > 0  )) {
            Aff_fd_ATs ( Par , N ) ;
            }
          else
@@ -778,7 +849,7 @@
        }
      else
        {
-       printf ( " %s", "LA CHAINE EXISTE DEJA" ) ;
+       printf ( " %s\n", "LA CHAINE EXISTE DEJA" ) ;
 
      } ;
      Insertbst2  =  N ;
@@ -904,7 +975,7 @@
       Pointeur_ATs Q=NULL;
       bool Notempty;
       Pointeur_PATs Pil=NULL;
-      Type_Ts _Struct_Temp2;
+      Type_Ts _Struct_Temp4;
 
       /** Corps du module **/
      Creerpile_PATs (& Pil ) ;
@@ -918,8 +989,8 @@
        if( ! Pilevide_PATs ( Pil ))   {
          Depiler_PATs (& Pil , &P ) ;
          /** Ecriture d'une structure */
-         _Struct_Temp2 = *Info_ATs(P);
-         printf ( " %s", _Struct_Temp2.Champ1 ) ;
+         _Struct_Temp4 = *Info_ATs(P);
+         printf ( " %s\n", _Struct_Temp4.Champ1 ) ;
          P  =  Fd_ATs ( P ) ;
          }
        else
@@ -994,10 +1065,10 @@
         /* traiter le nÅ“ud courant  */
          if( (strcmp( Caract ( Str , 1 ), *A) == 0  ) || (strcmp( Caract ( Str , 1 ), *B) == 0  ) || (strcmp( Caract ( Str , 1 ), *C) == 0  )) {
            Aff_element_V50i ( T , Niv + 1   , Element_V50i ( T , Niv + 1   ) + 1 ) ;
-           printf ( " %s", "ELEMENT:" );
-           printf ( " %s", Str );
-           printf ( " %s", "NIVEAU" );
-           printf ( " %d", Niv ) ;
+           printf ( " %s\n", "ELEMENT:" );
+           printf ( " %s\n", Str );
+           printf ( " %s\n", "NIVEAU" );
+           printf ( " %d\n", Niv ) ;
 
          } ;
          if( ( Fg_ATs ( P ) != NULL )) {
@@ -1014,10 +1085,10 @@
  } ;
       /*AFFICHAGE*/
        for( I  =  1 ;I <=  N ; ++I){
-         printf ( " %s", "NIVEAU" );
-         printf ( " %d", I );
-         printf ( " %s", "NOMBRE" );
-         printf ( " %d", Element_V50i(T,I) ) ;
+         printf ( " %s\n", "NIVEAU" );
+         printf ( " %d\n", I );
+         printf ( " %s\n", "NOMBRE" );
+         printf ( " %d\n", Element_V50i(T,I) ) ;
 
        } ;
 
@@ -1051,7 +1122,7 @@
   /*---------------------------SEARCH---------------------*/
   /*----------WORD SEARCH---------*/
   /*recherecher une chaine a l'aide du triplet ( bst1,2,3)*/
-  void Rechereche (string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z)
+  void Recherche (string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z)
     {
       /** Variables locales **/
       string255 Temp;
@@ -1059,17 +1130,17 @@
       /** Corps du module **/
      Temp = malloc(255 * sizeof(char));
      *Path  =  0 ;
-     if( (strcmp( Caract ( *Str , 1 ), *X) == 0  ) || (strcmp( Caract ( *Str , 1 ), *X) == 0  ) || (strcmp( Caract ( *Str , 1 ), *X) == 0  )) {
-       Rechmotbst1 ( & Bst1 , & *Str , & *Par , & *P , & *Path, & *X , & *Y , & *Z ) ;
+     if( (strcmp( Caract ( *Str , 1 ), *X) == 0  ) || (strcmp( Caract ( *Str , 1 ), *Y) == 0  ) || (strcmp( Caract ( *Str , 1 ), *Z) == 0  )) {
+       Rechmotbst1 ( & Bst1 , & *Str , & *Par , & *P , & *Path , & *X , & *Y , & *Z ) ;
        }
      else
        {
        if( (strcmp( Caract ( *Str , 1 ), *X) > 0  ) || (strcmp( Caract ( *Str , 1 ), *Y) > 0  ) || (strcmp( Caract ( *Str , 1 ), *Z) > 0  )) {
-         Rechmotbst ( & Bst2 , & *Str , & *Path, & *Par , & *P ) ;
+         Rechmotbst ( & Bst2 , & *Str , & *Par , & *P , & *Path ) ;
          }
        else
          {
-         Rechmotbst ( & Bst3 , & *Str , & *Path, & *Par , & *P ) ;
+         Rechmotbst3 ( & Bst3 , & *Str , & *Par , & *P , & *Path , & *X , & *Y , & *Z ) ;
 
        } ;
 
@@ -1078,7 +1149,7 @@
     }
   /*----------------------------------------*/
   /*Rechercher une chaine STR dans un BST TR*/
-  void Rechmotbst (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path)
+  void Rechmotbst (Pointeur_ATs *Tr , string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path)
     {
       /** Variables locales **/
       bool Trouve;
@@ -1095,14 +1166,14 @@
        *Path  =  1 ;
        Trouve  =  False ;
        while( ( *P != NULL ) && ( ! Trouve )) {
-         if( (strcmp( Struct1_Ts ( Info_ATs ( *P )  ), Struct1_Ts ( *Str  )) == 0  )) {
+         if( (strcmp( Struct1_Ts ( Info_ATs ( *P )  ), *Str) == 0  )) {
            Trouve  =  True ;
            }
          else
            {
            *Path  =  *Path + 1 ;
            *Par  =  *P ;
-           if(strcmp( Struct1_Ts ( *Str  ), Struct1_Ts ( Info_ATs ( *P )  )) < 0 ) {
+           if(strcmp( *Str, Struct1_Ts ( Info_ATs ( *P )  )) < 0 ) {
              *P  =  Fg_ATs ( *Par ) ;
              }
            else
@@ -1119,7 +1190,7 @@
 
     }
   /*---------------------------------------*/
-  void Rechmotbst1 (Pointeur_ATs *Tr , Typestr_Ts *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z)
+  void Rechmotbst1 (Pointeur_ATs *Tr , string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z)
     {
       /** Variables locales **/
       string255 Temp;
@@ -1138,7 +1209,7 @@
        *Path  =  1 ;
        Trouve  =  False ;
        while( ( *P != NULL ) && ( ! Trouve )) {
-         if( (strcmp( Struct1_Ts ( Info_ATs ( *P )  ), Struct1_Ts ( *Str  )) == 0  )) {
+         if( (strcmp( Struct1_Ts ( Info_ATs ( *P )  ), *Str) == 0  )) {
            Trouve  =  True ;
           /*arret au premier mot non-special*/
            }
@@ -1152,7 +1223,59 @@
              {
              *Par  =  *P ;
              *Path  =  *Path + 1 ;
-             if(strcmp( Struct1_Ts ( *Str  ), Struct1_Ts ( Info_ATs ( *P )  )) < 0 ) {
+             if(strcmp( *Str, Struct1_Ts ( Info_ATs ( *P )  )) < 0 ) {
+               *P  =  Fg_ATs ( *Par ) ;
+               }
+             else
+               {
+               *P  =  Fd_ATs ( *Par ) ;
+
+             } ;
+
+           } ;
+
+         } ;
+
+ } ;
+
+     } ;
+
+    }
+  /*---------------------------------------*/
+  void Rechmotbst3 (Pointeur_ATs *Tr , string255 *Str , Pointeur_ATs *Par , Pointeur_ATs *P , int *Path , string2 *X , string2 *Y , string2 *Z)
+    {
+      /** Variables locales **/
+      string255 Temp;
+      bool Trouve;
+
+      /** Corps du module **/
+     Temp = malloc(255 * sizeof(char));
+     *Par  =  NULL ;
+     if( ( *Tr == NULL )) {
+       *P  =  NULL ;
+       *Path  =  0 ;
+       }
+     else
+       {
+       *P  =  *Tr ;
+       *Path  =  1 ;
+       Trouve  =  False ;
+       while( ( *P != NULL ) && ( ! Trouve )) {
+         if( (strcmp( Struct1_Ts ( Info_ATs ( *P )  ), *Str) == 0  )) {
+           Trouve  =  True ;
+          /*arret au premier mot special*/
+           }
+         else
+           {
+           strcpy (Temp,   Struct1_Ts ( Info_ATs ( *P )  )) ;
+           if( (strcmp( Caract ( Temp , 1 ), *X) == 0  ) || (strcmp( Caract ( Temp , 1 ), *Y) == 0  ) || (strcmp( Caract ( Temp , 1 ), *Z) == 0  )) {
+             *P  =  NULL ;
+             }
+           else
+             {
+             *Par  =  *P ;
+             *Path  =  *Path + 1 ;
+             if(strcmp( *Str, Struct1_Ts ( Info_ATs ( *P )  )) < 0 ) {
                *P  =  Fg_ATs ( *Par ) ;
                }
              else
@@ -1252,15 +1375,15 @@
   void Preordre (Pointeur_ATs *R)
     {
       /** Variables locales **/
-      Type_Ts _Struct_Temp3;
+      Type_Ts _Struct_Temp5;
       Pointeur_ATs _Px1=NULL;
       Pointeur_ATs _Px2=NULL;
 
       /** Corps du module **/
      if( ( *R != NULL )) {
        /** Ecriture d'une structure */
-       _Struct_Temp3 = *Info_ATs(*R);
-       printf ( " %s", _Struct_Temp3.Champ1 ) ;
+       _Struct_Temp5 = *Info_ATs(*R);
+       printf ( " %s\n", _Struct_Temp5.Champ1 ) ;
        _Px1 =  Fg_ATs ( *R ) ;
        Preordre ( &_Px1) ;
        _Px2 =  Fd_ATs ( *R ) ;
@@ -1270,125 +1393,192 @@
 
     }
 
-  int main(int argc, char *argv[])
-    {
-     srand(time(NULL));
-     S = malloc(sizeof(Typestruct1_s));
-     S->Champ1 = malloc(255 * sizeof(char));
-     X = malloc(2 * sizeof(char));
-     Y = malloc(2 * sizeof(char));
-     Z = malloc(2 * sizeof(char));
-     printf(" Entrer la premiere lettre : ");
-     scanf ( " %s", X ) ;
-     printf("\n Entrer la deuxieme lettre : ");
-     scanf ( " %s", Y ) ;
-     printf("\n Entrer la troisieme lettre : ");
-     scanf ( " %s", Z ) ;
-     Genererfichier ( & Fich , & X , & Y , & Z ) ;
-     Constructbst1 ( & Fich , & Bst1 , & X , & Y , & Z ) ;
-     Constructbst3 ( & Fich , & Bst3 , & X , & Y , & Z ) ;
-     Constructbst3 ( & Fich , & Bst2 , & X , & Y , & Z ) ;
-     Quitter  =  False ;
-     while( ( ! Quitter )) {
-       clear_screen();
-       printf ( " %s", "\n" ) ;
-       printf ( " %s", "-------------------------------------------------------\n" ) ;
-       printf ( " %s", "                          MENU                         \n" ) ;
-       printf ( " %s", "-------------------------------------------------------\n" ) ;
-       printf ( " %s", " 1. Parcours Inordre des arbres              \n" ) ;
-       printf ( " %s", " 2. Compter les mots commencant par X / Y / Z \n" ) ;
-       printf ( " %s", " 3. Compter les mots par niveau              \n" ) ;
-       printf ( " %s", " 4. Hauteur des arbres                       \n" ) ;
-       printf ( " %s", " 5. Le RANGEQUERY                       \n" ) ;
-       printf ( " %s", " 6. Quitter                                  \n" ) ;
-       printf ( " %s", "-------------------------------------------------------\n" ) ;
-       printf ( " %s", ">> Choisissez une option : " ) ;
-       scanf ( " %d", &Choix ) ;
-       printf ( " %s", "\n" ) ;
-       if( ( Choix == 1 )) {
-         printf ( " %s", "PARCOURS INORDRE DU BST  \n" ) ;
-         Inordre ( & Bst1 ) ;
-         getchar();
-         printf("\n Appuyer sur entrer pour continuer..");
-         getchar();
-         }
-       else
-         {
-         if( ( Choix == 2 )) {
-           Num  =  0 ;
-           Comptespecial ( & Bst1 , & X , & Y , & Z , & Num ) ;
-           printf ( " %s", "Nombre de Mots commencant par X , Y ou Z : " );
-           printf ( " %d", Num ) ;
-           printf ( " %s", "\n" ) ;
-           getchar();
-            printf("\n Appuyer sur entrer pour continuer..");
-         getchar();
-           }
-         else
-           {
-           if( ( Choix == 3 )) {
-             printf ( " %s", "Nombre De Mots commencant par X , Y ou Z Dans Chaque Niveau:\n" ) ;
-             printf ( " %s", "BST1:\n" ) ;
-             Affich_niv ( & Bst1 , & X , & Y , & Z ) ;
-             printf ( " %s", "BST2:\n" ) ;
-             Affich_niv ( & Bst2 , & X , & Y , & Z ) ;
-             printf ( " %s", "BST3:\n" ) ;
-             Affich_niv ( & Bst3 , & X , & Y , & Z ) ;
-             getchar();
-                      printf("\n Appuyer sur entrer pour continuer..");
-         getchar();
-             }
-           else
-             {
-             if( ( Choix == 4 )) {
-               printf ( " %s", "Hauteur du BST1 :" );
-               printf ( " %d", Height(&Bst1) ) ;
-               printf ( " %s", "\n" ) ;
-               printf ( " %s", "Hauteur du BST2 :" );
-               printf ( " %d", Height(&Bst2) ) ;
-               printf ( " %s", "\n" ) ;
-               printf ( " %s", "Hauteur du BST3 :" );
-               printf ( " %d", Height(&Bst3) ) ;
-               printf ( " %s", "\n" ) ;
-               Preordre ( & Bst1 ) ;
-               getchar();
-                        printf("\n Appuyer sur entrer pour continuer..");
-         getchar();
-               }
-             else
-               {
-               if( ( Choix == 6 )) {
-                 printf ( " %s", "Fin du programme.\n" ) ;
-                 Quitter  =  True ;
-                 getchar();
-                          printf("\n Appuyer sur entrer pour continuer..");
-         getchar();
-                 }
-                 else
-                 {
-                     if ((Choix == 5)){
-                        printf(" Le RANGEQUERY : \n");
-                        Rangequery(&Bst2, &X, &Y, &Z);
+int main(int argc, char *argv[])
+{
+    srand(time(NULL));
+    S = malloc(sizeof(Typestruct1_s));
+    S->Champ1 = malloc(255 * sizeof(char));
+    X = malloc(2 * sizeof(char));
+    Y = malloc(2 * sizeof(char));
+    Z = malloc(2 * sizeof(char));
+    Str = malloc(255 * sizeof(char));
+
+    system("cls");
+    printf("\n========================================================\n");
+    printf("Binary search tree manager by Maram Daas and Hiba Khadir\n");
+    printf("========================================================\n\n");
+
+    printf("Entrez trois caracteres pour initialiser les arbres:\n");
+    printf("Caractere X: ");
+    scanf(" %s", X);
+    printf("Caractere Y: ");
+    scanf(" %s", Y);
+    printf("Caractere Z: ");
+    scanf(" %s", Z);
+
+    printf("\nInitialisation en cours...\n");
+    Genererfichier(&Fich, &X, &Y, &Z);
+    Constructbst1(&Fich, &Bst1, &X, &Y, &Z);
+    Constructbst3(&Fich, &Bst3, &X, &Y, &Z);
+    Constructbst2(&Fich, &Bst2, &X, &Y, &Z);
+    printf("Initialisation terminee!\n");
+
+    getchar();
+    Quitter = False;
+
+    while((!Quitter)) {
+        system("cls");
+        printf("\n");
+        printf("=======================================================\n");
+        printf("                         MENU                          \n");
+        printf("=======================================================\n");
+        printf(" 1. Parcours Inordre des arbres                       \n");
+        printf(" 2. Compter les mots commencant par X / Y / Z          \n");
+        printf(" 3. Compter les mots par niveau                       \n");
+        printf(" 4. Hauteur des arbres                                \n");
+        printf(" 5. Recherche d'un mot                                \n");
+        printf(" 6. Le RANGEQUERY                                     \n");
+        printf(" 7. Quitter                                           \n");
+        printf("=======================================================\n");
+        printf(">> Choisissez une option : ");
+        scanf(" %d", &Choix);
+
+        system("cls");
+
+        if((Choix == 1)) {
+            printf("\n");
+            printf("*******************************************************\n");
+            printf("            PARCOURS INORDRE DU BST                   \n");
+            printf("*******************************************************\n\n");
+            Inordre(&Bst1);
+            printf("\n\n");
+            printf("Appuyez sur une touche pour continuer...");
+            getchar();
+            getchar();
+        }
+        else {
+            if((Choix == 2)) {
+                printf("\n");
+                printf("*******************************************************\n");
+                printf("         COMPTAGE DES MOTS SPECIAUX                   \n");
+                printf("*******************************************************\n\n");
+                Num = 0;
+                Comptespecial(&Bst1, &X, &Y, &Z, &Num);
+                printf("Nombre de Mots commencant par X, Y ou Z : %d\n\n", Num);
+                printf("Appuyez sur une touche pour continuer...");
+                getchar();
+                getchar();
+            }
+            else {
+                if((Choix == 3)) {
+                    printf("\n");
+                    printf("*******************************************************\n");
+                    printf("         COMPTAGE PAR NIVEAU                          \n");
+                    printf("*******************************************************\n\n");
+                    printf("Nombre De Mots commencant par X, Y ou Z Dans Chaque Niveau:\n\n");
+
+                    printf("--- BST1 ---\n");
+                    Affich_niv(&Bst1, &X, &Y, &Z);
+                    printf("\n");
+
+                    printf("--- BST2 ---\n");
+                    Affich_niv(&Bst2, &X, &Y, &Z);
+                    printf("\n");
+
+                    printf("--- BST3 ---\n");
+                    Affich_niv(&Bst3, &X, &Y, &Z);
+                    printf("\n\n");
+
+                    printf("Appuyez sur une touche pour continuer...");
+                    getchar();
+                    getchar();
+                }
+                else {
+                    if((Choix == 4)) {
+                        printf("\n");
+                        printf("*******************************************************\n");
+                        printf("            HAUTEUR DES ARBRES                        \n");
+                        printf("*******************************************************\n\n");
+                        printf("Hauteur du BST1 : %d\n", Height(&Bst1));
+                        printf("Hauteur du BST2 : %d\n", Height(&Bst2));
+                        printf("Hauteur du BST3 : %d\n\n", Height(&Bst3));
+                        printf("Appuyez sur une touche pour continuer...");
                         getchar();
-                        printf("\n Appuyer sur entrer pour continuer..");
                         getchar();
-                     }
-               else
-                 {
-                 printf ( " %s", "Option invalide. Veuillez choisir une option entre 1 et 6.\n" ) ;
-                 getchar();
-                          printf("\n Appuyer sur entrer pour continuer..");
-         getchar();
-               } ;
-                 } ;
-             } ;
-           } ;
-         } ;
-       }
- } ;
-     Libererarb ( & Bst1 ) ;
-     Libererarb ( & Bst2 ) ;
-     Libererarb ( & Bst3 ) ;
-      system("PAUSE");
-      return 0;
+                    }
+                    else {
+                        if((Choix == 5)) {
+                            printf("\n");
+                            printf("*******************************************************\n");
+                            printf("            RECHERCHE D'UN MOT                        \n");
+                            printf("*******************************************************\n\n");
+                            printf("Entrez un mot a rechercher : ");
+                            scanf(" %[^\n]", Str);
+                            printf("\nRecherche en cours...\n");
+                            Recherche(&Str, &Par, &P, &Num, &X, &Y, &Z);
+                            printf("\nNombre de noeuds visites : %d\n", Num);
+
+                            if((P == NULL)) {
+                                printf("\n[RESULTAT] Chaine non trouvee\n");
+                            }
+                            else {
+                                printf("\n[RESULTAT] Chaine trouvee : ");
+                                _Struct_Temp1 = *Info_ATs(P);
+                                printf("%s\n", _Struct_Temp1.Champ1);
+
+                                if((Par != NULL)) {
+                                    printf("PARENT : ");
+                                    _Struct_Temp2 = *Info_ATs(Par);
+                                    printf("%s\n", _Struct_Temp2.Champ1);
+                                }
+                            }
+                            printf("\nAppuyez sur une touche pour continuer...");
+                            getchar();
+                            getchar();
+                        }
+                        else {
+                            if((Choix == 6)) {
+                                printf("\n");
+                                printf("*******************************************************\n");
+                                printf("               RANGE QUERY                            \n");
+                                printf("*******************************************************\n\n");
+                                Rangequery_optimal(&Bst1, &Bst2, &Bst3, &X, &Y, &Z, &N);
+                                printf("\n\nAppuyez sur une touche pour continuer...");
+                                getchar();
+                                getchar();
+                            }
+                            else {
+                                if((Choix == 7)) {
+                                    printf("\n");
+                                    printf("*******************************************************\n");
+                                    printf("                    AU REVOIR                         \n");
+                                    printf("*******************************************************\n\n");
+                                    printf("Fin du programme.\n\n");
+                                    Quitter = True;
+                                }
+                                else {
+                                    printf("\n");
+                                    printf("*******************************************************\n");
+                                    printf("                     ERREUR                           \n");
+                                    printf("*******************************************************\n\n");
+                                    printf("Option invalide. Veuillez choisir une option entre 1 et 7.\n\n");
+                                    printf("Appuyez sur une touche pour continuer...");
+                                    getchar();
+                                    getchar();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    printf("Liberation de la memoire...\n");
+    Libererarb(&Bst1);
+    Libererarb(&Bst2);
+    Libererarb(&Bst3);
+
+    system("PAUSE");
+    return 0;
+}
