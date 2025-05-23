@@ -7,6 +7,7 @@ SOIT
     choix , NUM DES ENTIERS ;
     QUITTER UN BOOLEEN ;
     STR UNE CHAINE;
+    N UN ENTIER;
 
 
 /*-------------------Declarations des modules----------------------*/
@@ -35,6 +36,7 @@ SOIT
     rechMotBST3 UNE ACTION;
 
     RANGEQUERY UNE ACTION;
+    RANGEQUERY_OPTIMAL UNE ACTION;
 
     /*------modules du test--------*/
     INORDRE UNE ACTION;
@@ -111,7 +113,7 @@ DEBUT
                                    FSI;
                                 SINON SI (choix = 6)
                                           ECRIRE('RANGE QUERY');
-                                          APPEL RANGEQUERY(BST2, X, Y, Z);
+                                          APPEL RANGEQUERY_OPTIMAL(BST1, BST2, BST3, X, Y, Z, N);
                                       SINON SI (choix = 7)
                                                ECRIRE('Fin du programme.');
                                                QUITTER := VRAI;
@@ -197,53 +199,89 @@ DEBUT
     FSI
 FIN
 
-ACTION RANGEQUERY(TR, A, B, C)
+ACTION RANGEQUERY_OPTIMAL(BST1, BST2, BST3, X, Y, Z, N)
+SOIT
+    BST1, BST2, BST3 DES ARB DE (CHAINE);
+    X, Y, Z DES CARACTERES;
+    N UN ENTIER;
+    MINI, MAXI DES CHAINES;
+    N1, N2, N3 DES ENTIERS;
+    MINI_CHAR, MAXI_CHAR DES CARACTERES;
+DEBUT
+    ECRIRE('ENTRER LE MOT MINIMUM:');
+    LIRE(MINI);
+    ECRIRE('ENTRER LE MOT MAXIMUM:');
+    LIRE(MAXI);
+
+    MINI_CHAR := CARACT(MINI, 1);
+    MAXI_CHAR := CARACT(MAXI, 1);
+
+    SI ((MINI_CHAR = X) OU (MINI_CHAR = Y) OU (MINI_CHAR = Z)) ET
+       ((MAXI_CHAR = X) OU (MAXI_CHAR = Y) OU (MAXI_CHAR = Z))
+       ECRIRE('USING BST1 - SPECIAL CHARS AT ROOT');
+       APPEL RANGEQUERY(BST1, MINI, MAXI, N);
+    SINON
+         SI ((MINI_CHAR <> X) ET (MINI_CHAR <> Y) ET (MINI_CHAR <> Z)) ET
+             ((MAXI_CHAR <> X) ET (MAXI_CHAR <> Y) ET (MAXI_CHAR <> Z))
+             ECRIRE('USING BST3 - NON-SPECIAL CHARS AT ROOT');
+             APPEL RANGEQUERY(BST3, MINI, MAXI, N);
+             SINON
+                  ECRIRE('USING BST2 - BALANCED TREE');
+                  APPEL RANGEQUERY(BST2, MINI, MAXI, N);
+    FSI
+    FSI;
+    ECRIRE('NUMBER OF NODES VISITED :');
+    ECRIRE(N);
+FIN
+
+ACTION RANGEQUERY(TR, MINI, MAXI, N)
 SOIT
     TR ,P , Q DES ARB DE (CHAINE);
     NOTEMPTY UN BOOLEEN ;
     Pil UNE PILE DE ARB DE (CHAINE);
     STR UNE CHAINE;
     CPT UN ENTIER;
-    WORD UNE CHAINE;
-    I UN ENTIER ;
-    A, B, C DES CARACTERES ;
     MAXI UNE CHAINE;
-    MINI UN CHAINE;
+    MINI UNE CHAINE;
+    N UN ENTIER;
 DEBUT
+    N := 0;
     CREERPILE ( Pil ) ;
     P := TR ;
-    NOTEMPTY := VRAI ;
-
-    APPEL RANDWORD(MINI, I, A, B, C);
-    APPEL RANDWORD(MAXI, I, A, B, C);
-    ECRIRE('MIN WORD: ');
-    ECRIRE(MINI);
-    ECRIRE('MAX WORD: ');
-    ECRIRE(MAXI);
     CPT := 0;
+    NOTEMPTY := VRAI ;
 
     TQ NOTEMPTY :
       TQ P <> NIL :
-         EMPILER ( Pil , P ) ;
-         P := FG ( P )
-         FTQ ;
+         STR := STRUCT(INFO(P),1);
+         SI STR >= MINI :
+            EMPILER ( Pil , P ) ;
+            P := FG ( P );
+            N := N + 1;
+         SINON
+            P := FD ( P ) ;
+            N := N + 1;
+         FSI;
+      FTQ ;
 
       SI NON PILEVIDE ( Pil ) :
          DEPILER ( Pil , P ) ;
+         N := N + 1 ;
          STR := STRUCT(INFO(P),1);
-         SI caract(STR,1) < caract(MAXI,1) :
-           SI caract(STR,1) > caract(MINI,1) :
-              ECRIRE(INFO(P));
-              CPT := CPT + 1;
-           FSI
-         FSI;
 
-         P := FD ( P ) ;
+         SI (STR >= MINI) ET (STR <= MAXI) :
+            ECRIRE(INFO(P));
+            CPT := CPT + 1;
+         FSI ;
 
+         SI STR <= MAXI :
+            P := FD ( P ) ;
+         SINON
+            P := NIL ;
+         FSI ;
       SINON
          NOTEMPTY := FAUX
       FSI
-
     FTQ;
     ECRIRE('NUMBER OF WORDS FOUND :');
     ECRIRE(CPT);
