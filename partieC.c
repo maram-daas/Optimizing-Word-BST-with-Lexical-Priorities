@@ -1338,7 +1338,7 @@
      S->Champ1 = malloc(255 * sizeof(char));
      Word = malloc(255 * sizeof(char));
      Ouvrir_s (&F , "F2.z" , "N" ) ;
-     for( J  =  1 ;J <=  5 ; ++J){
+     for( J  =  1 ;J <=  10000 ; ++J){
        Randword ( & Word , & I , & *A , & *B , & *C ) ;
        S_S.Champ1= malloc(255 * sizeof(char));
        strcpy(S_S.Champ1 , Word) ;
@@ -1450,6 +1450,7 @@ int main(int argc, char *argv[])
     Constructbst1(&Fich, &Bst1, &X, &Y, &Z);
     Constructbst3(&Fich, &Bst3, &X, &Y, &Z);
     Constructbst2(&Fich, &Bst2, &X, &Y, &Z);
+    Constructbst0(&Fich, &Bst0);
     printf("Initialisation terminee!\n");
 
     getchar();
@@ -1467,7 +1468,7 @@ int main(int argc, char *argv[])
         printf(" 4. Hauteur des arbres                                \n");
         printf(" 5. Recherche d'un mot                                \n");
         printf(" 6. Le RANGEQUERY                                     \n");
-        printf(" 7. Quitter                                           \n");
+        printf(" 0. Quitter                                           \n");
         printf("=======================================================\n");
         printf(">> Choisissez une option : ");
         scanf(" %d", &Choix);
@@ -1577,7 +1578,7 @@ int main(int argc, char *argv[])
                                 getchar();
                             }
                             else {
-                                if((Choix == 7)) {
+                                if((Choix == 0)) {
                                     printf("\n");
                                     printf("*******************************************************\n");
                                     printf("                    AU REVOIR                         \n");
@@ -1585,15 +1586,17 @@ int main(int argc, char *argv[])
                                     printf("Fin du programme.\n\n");
                                     Quitter = True;
                                 }
+
                                 else {
                                     printf("\n");
                                     printf("*******************************************************\n");
                                     printf("                     ERREUR                           \n");
                                     printf("*******************************************************\n\n");
-                                    printf("Option invalide. Veuillez choisir une option entre 1 et 7.\n\n");
+                                    printf("Option invalide. Veuillez choisir une option entre 0 et 6.\n\n");
                                     printf("Appuyez sur une touche pour continuer...");
                                     getchar();
                                     getchar();
+                                }
                                 }
                             }
                         }
@@ -1601,12 +1604,12 @@ int main(int argc, char *argv[])
                 }
             }
         }
-    }
 
     printf("Liberation de la memoire...\n");
     Libererarb(&Bst1);
     Libererarb(&Bst2);
     Libererarb(&Bst3);
+    Libererarb(&Bst0);
 
     system("PAUSE");
     return 0;
