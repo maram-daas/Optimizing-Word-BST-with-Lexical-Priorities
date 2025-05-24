@@ -458,6 +458,7 @@
   Pointeur_ATs Bst1=NULL;
   Pointeur_ATs Bst3=NULL;
   Pointeur_ATs Bst2=NULL;
+  Pointeur_ATs Bst0=NULL;
   Pointeur_ATs P=NULL;
   Pointeur_ATs Par=NULL;
   FILE *Fich;
@@ -521,6 +522,7 @@
   /** Prototypes des fonctions **/
 
   void Constructbst2 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C);
+  void Constructbst0 (FILE *F , Pointeur_ATs *Tree);
   void Vers_milieu (Pointeur_ATs *R , Pointeur_ATs *P);
   void Rangequery_optimal (Pointeur_ATs *Bst1 , Pointeur_ATs *Bst2 , Pointeur_ATs *Bst3 , string2 *X , string2 *Y , string2 *Z , int *N);
   void Rangequery (Pointeur_ATs *Tr , string255 *Mini , string255 *Maxi , int *N);
@@ -726,8 +728,40 @@
      printf ( " %d\n", Cpt ) ;
 
     }
-  /*construction du BST1 a partir du fichier genere*/
-  void Constructbst1 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
+  /*construction du BST0 a partir du fichier genere*/
+  void Constructbst0 (FILE *F , Pointeur_ATs *Tree)
+    {
+      /** Variables locales **/
+      Typestruct1_s S ;
+      int Nodesnum;
+      Pointeur_ATs P=NULL;
+      Pointeur_ATs Par=NULL;
+      string255 _Px1;
+
+      /** Corps du module **/
+     S = malloc(sizeof(Typestruct1_s));
+     S->Champ1 = malloc(255 * sizeof(char));
+     _Px1 = malloc(255 * sizeof(char));
+     Ouvrir_s (&F , "F2.z" , "A" ) ;
+     Nodesnum  =  0 ;
+     while( ! Finfich_s ( F )) {
+       Lireseq_s ( F , S ) ;
+       strcpy(_Px1,  Struct1_Ts ( S  ) );
+       P  =  Insertbst ( & *Tree , &_Px1) ;
+      /*incrementer le compteur */
+       if( ( P != NULL )) {
+         Nodesnum  =  Nodesnum + 1 ;
+
+       } ;
+
+ } ;
+     Fermer_s ( F ) ;
+     printf ( " %s\n", "Compte = " );
+     printf ( " %d\n", Nodesnum ) ;
+
+    }
+
+    void Constructbst1 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
     {
       /** Variables locales **/
       Typestruct1_s S ;
@@ -751,12 +785,6 @@
       /*incrementer le compteur */
        if( ( P != NULL )) {
          Nodesnum  =  Nodesnum + 1 ;
-        /*si une chaine speciale , deplacer vers la racine */
-         strcpy (Str,   Struct1_Ts ( Info_ATs ( P )  )) ;
-         if( (strcmp( Caract ( Str , 1 ), *A) == 0  ) || (strcmp( Caract ( Str , 1 ), *B) == 0  ) || (strcmp( Caract ( Str , 1 ), *C) == 0  )) {
-           Vers_racine ( & *Tree , & P ) ;
-
-         } ;
 
        } ;
 
@@ -766,6 +794,7 @@
      printf ( " %d\n", Nodesnum ) ;
 
     }
+
   /*--------------------------------------------*/
   void Constructbst3 (FILE *F , Pointeur_ATs *Tree , string2 *A , string2 *B , string2 *C)
     {
