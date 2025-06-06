@@ -1,6 +1,6 @@
 # tpZ – Binary Search Tree Transformations
 
-## 📌 Overview
+## Overview
 
 This project explores how Binary Search Trees (BSTs) can be transformed through node rotations based on starting characters. It was developed as a practical application of the **Z programming language**, created by **Professor D.E. Zegour** at **ESI Algiers**.
 
@@ -11,7 +11,7 @@ The program reads words from a file, builds different BST structures (BST0 to BS
 
 ---
 
-## 🌳 Trees Used
+## Trees Used
 
 - **BST0** – plain tree, words inserted in file order  
 - **BST1** – words starting with **X, Y, Z** are **moved up toward the root**  
@@ -22,14 +22,17 @@ The program reads words from a file, builds different BST structures (BST0 to BS
 
 ---
 
-## 📂 Files in This Project
+## Files in This Project
+
 `tpZ Daas_Khadir 13 (z-part).alg` (original code in **Z language**)
+
 `tpZ Daas_Khadir 13 (c-part).c` (converted C code) 
+
 `tpZ Daas_Khadir 13 (rapport).pdf` (project report) 
 
 ---
 
-## 🧪 Features
+## Features
 
 - Read or generate word lists
 - Build 4 types of BSTs
